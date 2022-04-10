@@ -35,14 +35,12 @@ impl Cellule {
         self.state == State::Dead
     }
 
-    pub fn toggle(&mut self) {
-        if self.is_dead() {
-            self.set_alive()
-        } else if self.is_alive() {
-            self.set_green()
+    pub fn toggle(&mut self, player: u8) {
+        if(player == 1){
+            self.set_alive();
         }
         else{
-            self.set_dead()
+            self.set_green();
         }
     }
 

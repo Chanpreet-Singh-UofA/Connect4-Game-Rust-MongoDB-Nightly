@@ -87,7 +87,7 @@ impl Component for connect4_computer {
             }
             Msg::ToggleCellule(idx) => {
                 let cellule = self.cellules.get_mut(idx).unwrap();
-                cellule.toggle();
+                //cellule.toggle();
                 true
             }
             Msg::updatePlayer1(player1) => {
