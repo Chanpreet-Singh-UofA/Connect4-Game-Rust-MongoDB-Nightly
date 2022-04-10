@@ -1,6 +1,6 @@
 #![feature(decl_macro)]
 //https://github.com/SergioBenitez/Rocket/issues/1134
-
+// https://stackoverflow.com/questions/62412361/how-to-set-up-cors-or-options-for-rocket-rs for learning how to attach CORS headers to rocket
 use mongodb::{options::ClientOptions, sync::Client, sync::Database};
 use serde::{Deserialize, Serialize};
 use futures::stream::TryStreamExt;
@@ -12,6 +12,27 @@ use std::env;
 use std::error::Error;
 use tokio;
 use mongodb::sync::Collection;
+use rocket::http::Header;
+use rocket::{Request, Response};
+use rocket::fairing::{Fairing, Info, Kind};
+
+pub struct CORS;
+
+impl Fairing for CORS {
+    fn info(&self) -> Info {
+        Info {
+            name: "Add CORS headers to responses",
+            kind: Kind::Response
+        }
+    }
+
+    fn on_response(&self, request: &Request, response: &mut Response) {
+        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Methods", "POST, GET, PATCH, OPTIONS"));
+        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Game {
@@ -122,8 +143,8 @@ pub fn getAllPlayers() -> Json<Vec<bson::Document>>  {
 }
 
 //Add a new game. Add Plyers before adding a new game. 
-#[post("/addGame", format = "json", data = "<gameInfo>")]   
-pub fn addGame(gameInfo: Json<Game>) -> Json<String> {
+#[post("/addGame", format = "text/plain", data = "<gameInfo>")]   
+pub fn addGame(gameInfo: Json<Game>) {
 
     match MyMongo::setup() {
         Ok(mut db) =>{
@@ -149,7 +170,6 @@ pub fn addGame(gameInfo: Json<Game>) -> Json<String> {
         Err(_) => {println!("Game not added");
         }
     }
-    return Json(String::from("Update success"));
 }
 
 //Return a game with a particular game ID
@@ -285,5 +305,5 @@ pub fn getComputerWins() -> Json<Vec<bson::Document>> {
 
 fn main() {
     let mut m = MyMongo::setup();
-    rocket::ignite().mount("/", routes![addPlayer, getScore,getGamesCount, getAllPlayers, addGame, getGame, getComputerWins, getAllGame, getComputerGame]).launch();
+    rocket::ignite().attach(CORS).mount("/", routes![addPlayer, getScore,getGamesCount, getAllPlayers, addGame, getGame, getComputerWins, getAllGame, getComputerGame]).launch();
 }
