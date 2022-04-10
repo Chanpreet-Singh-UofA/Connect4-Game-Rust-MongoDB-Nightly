@@ -286,16 +286,16 @@ impl Component for toot_otto_computer {
                     <label for="Medium">{"Medium"}</label>
                 </div>
                 <div class="readout">
-                    <div>
+                    <div class = "text2">
                         {format!("Player 1: {}", self.player1)}
                     </div>
-                    <div>
+                    <div class = "text2">
                     {format!("Objective: spell TOOT")}
                     </div>
-                    <div>
+                    <div class = "text2">
                         {format!("Current Difficulty: {}", self.difficulty)}
                     </div>
-                    <div>
+                    <div class = "text2">
                         {format!("{}", self.winnerString)}
                     </div>
                 </div>

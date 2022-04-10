@@ -136,3 +136,8 @@ body {
   border: 1px solid black;
   background-color: rgba(0, 0, 0, 0.25);
 }
+
+.text2 {
+  font-size: 14px;
+  color: #ccc;
+}

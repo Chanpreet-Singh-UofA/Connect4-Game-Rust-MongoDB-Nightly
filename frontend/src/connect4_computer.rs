@@ -71,6 +71,15 @@ impl connect4_computer {
         html! {
             <div key={idx} class={classes!("game-cellule", cellule_status)}
                 onclick={link.callback(move |_| Msg::ToggleCellule(idx))}>
+                {
+                    if cellule.is_alive() {
+                        "X"
+                    } else if (cellule.is_dead()) {
+                        ""
+                    } else {
+                        "O"
+                    }
+                }
             </div>
         }
     }
@@ -247,13 +256,13 @@ impl Component for connect4_computer {
                             <label for="Hard">{"Hard"}</label>
                         </div>
                         <div class="readout">
-                            <div>
+                            <div class = "text2">
                                 {format!("Player 1: {}", self.player1)}
                             </div>
-                            <div>
+                            <div class = "text2">
                                 {format!("Current Difficulty:{}", self.difficulty)}
                             </div>
-                            <div>
+                            <div class = "text2">
                                 {format!("{}", self.winnerString)}
                             </div>
                         </div>

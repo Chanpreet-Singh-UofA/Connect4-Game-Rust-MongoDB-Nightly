@@ -72,6 +72,15 @@ impl connect_4 {
         html! {
             <div key={idx} class={classes!("game-cellule", cellule_status)}
                 onclick={link.callback(move |_| Msg::ToggleCellule(idx))}>
+                {
+                    if cellule.is_alive() {
+                        "X"
+                    } else if (cellule.is_dead()) {
+                        ""
+                    } else {
+                        "O"
+                    }
+                }
             </div>
         }
     }
@@ -224,13 +233,13 @@ impl Component for connect_4 {
                             <button class="game-button" onclick={ctx.link().callback(|_| Msg::Reset)}>{ "Start" }</button>
                         </div>
                         <div class="readout">
-                            <div>
+                            <div class = "text2">
                                 {format!("Player 1: {}   |   Player 2: {}", self.player1,self.player2)}
                             </div>
-                            <div>
+                            <div class = "text2">
                                 {format!("Current Turn: {}", {if(self.current_player == 1){self.player1.clone()}else{self.player2.clone()}})}
                             </div>
-                            <div>
+                            <div class = "text2">
                                 {format!("{}", self.winnerString)}
                             </div>
                         </div>
