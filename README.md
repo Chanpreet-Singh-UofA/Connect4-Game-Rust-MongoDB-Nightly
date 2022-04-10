@@ -12,6 +12,17 @@ rustup install nightly
 rustup override set nightly
 ```
 
+4. Install MongoDB.
+```
+Instructions are on MongoDB website: https://www.mongodb.com/try/download/community
+```
+
+4. Build and Run Server.
+```
+cargo build
+cargo run
+```
+
 ### Frontend Installation
 1. Navigate to the 'frontend/' directory.
 2. Install 'Trunk'.
