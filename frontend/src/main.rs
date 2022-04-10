@@ -59,7 +59,7 @@ impl Component for App {
                 </main>
                 <footer class="footer">
                     <div class="content has-text-centered">
-                        { "made by group 7" }
+                        { "made by group 13" }
                     </div>
                 </footer>
             </BrowserRouter>
