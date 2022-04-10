@@ -159,8 +159,6 @@ impl Component for game_history {
     }
 
     fn view(&self, ctx: &Context<Self>) -> VNode {
-        // This gives us a component's "`Scope`" which allows us to send messages, etc to the component.
-
         let link = ctx.link();
         html! {
             <div class="w3-container" id="services" style="margin-top:75px">
