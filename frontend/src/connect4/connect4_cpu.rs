@@ -1,38 +1,38 @@
 use super::connect4::Connect4;
 
-use rayon::prelude::*;
+//use rayon::prelude::*;
 
 pub const NUM_COLS: usize = 7;
 pub const NUM_ROWS: usize = 6; // also max height
 
-fn run_next(board:Connect4, depth: usize, i: usize) -> (Option<usize>, i32) {
-    // inspiration taken from:
-    //https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=5f08e8089e6053687d148dd1ebce1007
-    if i < NUM_COLS-1 {
-        //println!("creating thread: {}", i);
-        let mut board_copy = board.clone();
-        if board_copy.insert(i, 2) {
-            let (r1, r2) = rayon::join(|| minimax(board_copy, depth-1, 1, i), || run_next(board, depth, i+1));
-            //println!("{}: {}", i, r1.1);
-            if r1.1 > r2.1 {
-                return (Some(i), r1.1)
-            } else {
-                return r2;
-            }
-        } else {
-            return run_next(board, depth, i+1);
-        }
-    } else {
-        let mut board_copy = board.clone();
-        if board_copy.insert(i, 2) {
-            let r1 = minimax(board_copy, depth-1, 1, i);
-            //println!("{}: {}", i, r1.1);
-            return (Some(i), r1.1);
-        } else {
-            return (None, -1030)
-        }
-    }
-}
+// fn run_next(board:Connect4, depth: usize, i: usize) -> (Option<usize>, i32) {
+//     // inspiration taken from:
+//     //https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=5f08e8089e6053687d148dd1ebce1007
+//     if i < NUM_COLS-1 {
+//         //println!("creating thread: {}", i);
+//         let mut board_copy = board.clone();
+//         if board_copy.insert(i, 2) {
+//             let (r1, r2) = rayon::join(|| minimax(board_copy, depth-1, 1, i), || run_next(board, depth, i+1));
+//             //println!("{}: {}", i, r1.1);
+//             if r1.1 > r2.1 {
+//                 return (Some(i), r1.1)
+//             } else {
+//                 return r2;
+//             }
+//         } else {
+//             return run_next(board, depth, i+1);
+//         }
+//     } else {
+//         let mut board_copy = board.clone();
+//         if board_copy.insert(i, 2) {
+//             let r1 = minimax(board_copy, depth-1, 1, i);
+//             //println!("{}: {}", i, r1.1);
+//             return (Some(i), r1.1);
+//         } else {
+//             return (None, -1030)
+//         }
+//     }
+// }
 
 pub fn minimax(board: Connect4, depth: usize, player: u8, col: usize) -> (Option<usize>, i32) {
     // if depth == 6 { // if depth is 6, then the first 7 branches will be ran in parallel, increasing speed by up to 7 times
