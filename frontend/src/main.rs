@@ -138,7 +138,7 @@ impl App {
 fn switch(routes: &Route) -> Html {
     match routes.clone() {
         Route::connect4 => html! {
-            <connect_4::connect4 />
+            <connect_4::connect_4 />
         },
         Route::toot_otto => html! {
             <toot_otto::toot_otto />

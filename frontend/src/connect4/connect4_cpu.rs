@@ -1,4 +1,4 @@
-use crate::connect4::connect4::Connect4;
+use super::connect4::Connect4;
 
 use rayon::prelude::*;
 

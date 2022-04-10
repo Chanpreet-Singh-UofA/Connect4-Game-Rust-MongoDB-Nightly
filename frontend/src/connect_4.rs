@@ -1,3 +1,7 @@
+#[path = "../src/connect4/mod.rs"]
+mod connect4;
+use connect4::connect4::Connect4;
+
 use crate::cell::Cellule;
 use rand::Rng;
 use yew::html::Scope;
@@ -17,7 +21,7 @@ pub struct InputData {
     pub value: String,
 }
 
-pub struct connect4 {
+pub struct connect_4 {
     cellules: Vec<Cellule>,
     cellules_width: usize,
     cellules_height: usize,
@@ -27,7 +31,7 @@ pub struct connect4 {
     input2: NodeRef,
 }
 
-impl connect4 {
+impl connect_4 {
 
     fn reset(&mut self) {
         for cellule in self.cellules.iter_mut() {
@@ -59,7 +63,7 @@ impl connect4 {
         }
     }
 }
-impl Component for connect4 {
+impl Component for connect_4 {
     type Message = Msg;
     type Properties = ();
 
