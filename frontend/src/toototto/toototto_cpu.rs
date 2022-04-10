@@ -35,24 +35,24 @@ fn run_next(board:TootOtto, depth: usize, i: usize, token: u8) -> (Option<(usize
 }
 
 pub fn minimax(board: TootOtto, depth: usize, player: u8, col: usize) -> (Option<(usize, u8)>, i32) {
-    if depth == 4 { // if depth is 6, then the first 7 branches will be ran in parallel, increasing speed by up to 7 times
-        let mut board_copy = board.clone();
-        let i = 0;
-        let (r1,r2) = rayon::join(||run_next(board_copy, depth, i, 1), || run_next(board_copy, depth, i, 2));
-        // println!("{:?}", r1);
-        // println!("{:?}", r2);
-        if r1.1 == r2.1 {
-            if r1.0.unwrap().0 < r2.0.unwrap().0 {
-                return r1;
-            } else {
-                return r2;
-            }
-        } else if r1.1 > r2.1 {
-            return r1;
-        } else {
-            return r2;
-        }
-    }
+    // if depth == 4 { // if depth is 6, then the first 7 branches will be ran in parallel, increasing speed by up to 7 times
+    //     let mut board_copy = board.clone();
+    //     let i = 0;
+    //     let (r1,r2) = rayon::join(||run_next(board_copy, depth, i, 1), || run_next(board_copy, depth, i, 2));
+    //     // println!("{:?}", r1);
+    //     // println!("{:?}", r2);
+    //     if r1.1 == r2.1 {
+    //         if r1.0.unwrap().0 < r2.0.unwrap().0 {
+    //             return r1;
+    //         } else {
+    //             return r2;
+    //         }
+    //     } else if r1.1 > r2.1 {
+    //         return r1;
+    //     } else {
+    //         return r2;
+    //     }
+    // }
     // psuedo code gotten from:
     //https://medium.com/analytics-vidhya/artificial-intelligence-at-play-connect-four-minimax-algorithm-explained-3b5fc32e4a4f
     // check for terminating game state

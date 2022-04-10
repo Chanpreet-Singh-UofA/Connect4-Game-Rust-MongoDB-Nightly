@@ -35,13 +35,13 @@ fn run_next(board:Connect4, depth: usize, i: usize) -> (Option<usize>, i32) {
 }
 
 pub fn minimax(board: Connect4, depth: usize, player: u8, col: usize) -> (Option<usize>, i32) {
-    if depth == 6 { // if depth is 6, then the first 7 branches will be ran in parallel, increasing speed by up to 7 times
-        let mut board_copy = board.clone();
-        let i = 0;
-        let result = run_next(board_copy, depth, i);
-        //println!("{:?}", result);
-        return result;
-    }
+    // if depth == 6 { // if depth is 6, then the first 7 branches will be ran in parallel, increasing speed by up to 7 times
+    //     let mut board_copy = board.clone();
+    //     let i = 0;
+    //     let result = run_next(board_copy, depth, i);
+    //     //println!("{:?}", result);
+    //     return result;
+    // }
     // psuedo code gotten from:
     //https://medium.com/analytics-vidhya/artificial-intelligence-at-play-connect-four-minimax-algorithm-explained-3b5fc32e4a4f
     // check for terminating game state

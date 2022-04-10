@@ -31,6 +31,7 @@ pub struct connect4_computer {
     player1: String,
     input: NodeRef,
     difficulty:String,
+    depth: usize,
     current_player: u8,
     board: Connect4,
     winnerString: String,
@@ -89,6 +90,7 @@ impl Component for connect4_computer {
             player1: String::from(""),
             input: NodeRef::default(),
             difficulty:String::from("Easy"),
+            depth: 2,
             current_player: 1,
             board: Connect4::new(),
             winnerString: String::from(""),
@@ -108,9 +110,54 @@ impl Component for connect4_computer {
                 true
             }
             Msg::ToggleCellule(idx) => {
-                let cellule = self.cellules.get_mut(idx).unwrap();
-                //cellule.toggle();
-                true
+                if(!self.is_game_over){
+                    let (_, col) = self.idx_to_row_col(idx);
+                    if(self.board.insert(col as usize,self.current_player)){
+                        let row = 6 - self.board.col_height[col as usize];
+                        let index = self.row_col_as_idx(row as isize,col);
+                        let cellule = self.cellules.get_mut(index).unwrap();
+                        cellule.toggle(self.current_player);
+                        let gameState = self.board.check_win_draw(col as usize, self.current_player);
+                        if( gameState == 1){
+                            self.winnerString = format!("{} wins!", self.player1);
+                            self.is_game_over = true;
+                        }
+                        else if( gameState == -1){
+                            self.winnerString = String::from("Draw");
+                            self.is_game_over = true;
+                        }
+                        else{
+                            self.current_player = 2;
+                        }
+                        // ai turn
+                        let cpu = connect4::connect4_cpu::minimax(self.board, self.depth, 2, col as usize).0;
+                        match cpu {
+                            None => {
+                                // game over?
+                            },
+                            Some(col) => {
+                                let res = self.board.insert(col, 2); // always will return true
+                                let row = 6 - self.board.col_height[col as usize];
+                                let index = self.row_col_as_idx(row as isize,col as isize);
+                                let cellule = self.cellules.get_mut(index).unwrap();
+                                cellule.toggle(self.current_player);
+
+                                let win = self.board.check_win_draw(col, 2);
+                                if win == -1 {
+                                    self.winnerString = String::from("Draw");
+                                    self.is_game_over = true;
+                                } else if win == 1 {
+                                    self.winnerString = String::from("CPU wins!");
+                                    self.is_game_over = true;
+                                } else {
+                                    self.current_player = 1;
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                false
             }
             Msg::updatePlayer1(player1) => {
                 self.player1 = player1;
@@ -119,23 +166,26 @@ impl Component for connect4_computer {
             Msg::setDifficultyEasy() => {
                 if(self.is_game_over){
                     self.difficulty = String::from("Easy");
+                    self.depth = 2;
                     return true;
                 }
-                false
+                true
             }
             Msg::setDifficultyMedium() => {
                 if(self.is_game_over){
                     self.difficulty = String::from("Medium");
+                    self.depth = 4;
                     return true;
                 }
-                false
+                true
             }
             Msg::setDifficultyHard() => {
                 if(self.is_game_over){
                     self.difficulty = String::from("Hard");
+                    self.depth = 6;
                     return true;
                 }
-                false
+                true
             }
         }
     }
@@ -190,7 +240,7 @@ impl Component for connect4_computer {
                             />
                             <button class="game-button" onclick={ctx.link().callback(|_| Msg::Reset)}>{ "Start" }</button>
                         </div>
-                        <div>
+                        <div class="readout">
                             {"Select Difficulty"}
                             <input type="radio" id="Easy" value="Easy" checked={self.difficulty=="Easy" } oninput = {update_difficulty_easy} />
                             <label for="Easy">{"Easy"}</label>
@@ -205,6 +255,9 @@ impl Component for connect4_computer {
                             </div>
                             <div>
                                 {format!("current difficulty:{}", self.difficulty)}
+                            </div>
+                            <div>
+                                {format!("{}", self.winnerString)}
                             </div>
                         </div>
                     </section>

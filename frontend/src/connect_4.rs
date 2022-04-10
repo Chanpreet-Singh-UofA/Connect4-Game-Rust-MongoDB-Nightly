@@ -44,8 +44,6 @@ impl connect_4 {
         for cellule in self.cellules.iter_mut() {
             cellule.set_dead();
         }
-        self.is_game_over = false;
-        self.winnerString = String::from("");
     }
 
     fn row_col_as_idx(&self, row: isize, col: isize) -> usize {
