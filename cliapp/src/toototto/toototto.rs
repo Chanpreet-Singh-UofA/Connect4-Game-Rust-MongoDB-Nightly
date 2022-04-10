@@ -45,6 +45,8 @@ impl TootOtto {
                 return -1; // draw
             }
         }
+        let mut p1w = false;
+        let mut p2w = false;
         let cond1: [u8;4] = [1,2,2,1]; // TOOT
         let cond2: [u8;4] = [2,1,1,2]; // OTTO
 
@@ -68,10 +70,12 @@ impl TootOtto {
                 counter2 = 0;
             }
             if counter1 == 4 {
-                return 1;
+                counter1 = 0;
+                p1w = true;
             }
             if counter2 == 4 {
-                return 2;
+                counter2 = 0;
+                p2w = true;
             }
         }
         counter1 = 0;
@@ -93,10 +97,12 @@ impl TootOtto {
                 counter2 = 0;
             }
             if counter1 == 4 {
-                return 1;
+                counter1 = 0;
+                p1w = true;
             }
             if counter2 == 4 {
-                return 2;
+                counter2 = 0;
+                p2w = true;
             }
         }
         counter1 = 0;
@@ -122,7 +128,8 @@ impl TootOtto {
                     counter1 = 0;
                 }
                 if counter1 == 4 {
-                    return 1;
+                    counter1 = 0;
+                    p1w = true;
                 }
                 if self.board[j][i] == cond2[counter2] {
                     counter2 += 1;
@@ -132,7 +139,8 @@ impl TootOtto {
                     counter2 = 0;
                 }
                 if counter2 == 4 {
-                    return 2;
+                    counter2 = 0;
+                    p2w = true;
                 }
                 j+=1;
             }
@@ -157,7 +165,8 @@ impl TootOtto {
                 counter1 = 0;
             }
             if counter1 == 4 {
-                return 1;
+                counter1 = 0;
+                p1w = true;
             }
             if self.board[j][i] == cond2[counter2] {
                 counter2 += 1;
@@ -167,7 +176,8 @@ impl TootOtto {
                 counter2 = 0;
             }
             if counter2 == 4 {
-                return 2;
+                counter2 = 0;
+                p2w = true;
             }
             if j > 0 {
                 j -= 1;
@@ -175,6 +185,14 @@ impl TootOtto {
                 break;
             }
         }
-        return 0;
+        if p1w && p2w { // draw
+            return -1
+        } else if p1w {
+            return 1
+        } else if p2w {
+            return 2
+        } else {
+            return 0;
+        }
     }
 }
