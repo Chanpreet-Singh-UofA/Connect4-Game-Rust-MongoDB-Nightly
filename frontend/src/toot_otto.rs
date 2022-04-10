@@ -166,21 +166,19 @@ impl Component for toot_otto {
                     self.player2 = player2;
                     return true;
                 }
-                false    
+                false  
             }
             Msg::selectT() => {
                 if(!self.is_game_over){
                     self.letter = "T".to_string();
-                    return true;
                 }
-                false
+                true
             }
             Msg::selectO() => {
                 if(!self.is_game_over){
                     self.letter = "O".to_string();
-                    return true;
                 }
-                false
+                true
             }
         }
     }
@@ -223,7 +221,7 @@ impl Component for toot_otto {
             <div>
                 <section class="game-container">
                     <header class="app-header">
-                        <h1 class="app-title">{ "toot_otto" }</h1>
+                        <h1 class="app-title">{ "TOOT-OTTO PvP" }</h1>
                     </header>
                     <section class="game-area">
                     <div class="game-of-life">
@@ -247,7 +245,7 @@ impl Component for toot_otto {
                     />
                     <button class="game-button" onclick={ctx.link().callback(|_| Msg::Reset)}>{ "Start" }</button>
                 </div>
-                <div>
+                <div class="readout">
                     {"Select a Letter:"}
                     <input type="radio" id="T" value="T" checked={self.letter=="T" } oninput = {update_letter} />
                     <label for="T">{"T"}</label>
@@ -256,10 +254,13 @@ impl Component for toot_otto {
                 </div>
                 <div class="readout">
                     <div>
-                        {format!("player1:{}\tplayer2:{}\tletter:{}", self.player1,self.player2,self.letter)}
+                        {format!("Player 1: {}   |   Player 2: {}", self.player1,self.player2)}
                     </div>
                     <div>
-                        {format!("current turn: {}", {if(self.current_player == 1){self.player1.clone()}else{self.player2.clone()}})}
+                        {format!("Current turn: {}", {if(self.current_player == 1){self.player1.clone()}else{self.player2.clone()}})}
+                    </div>
+                    <div>
+                        {format!("Objective: spell {}", {if(self.current_player == 1){"TOOT"}else{"OTTO"}})}
                     </div>
                     <div>
                         {format!("{}", self.winnerString)}
@@ -269,7 +270,7 @@ impl Component for toot_otto {
                 </section>
                 <footer class="app-footer">
                     <strong class="footer-text">
-                      { "connect 4 game vs AI " }
+                      { "" }
                     </strong>
                 </footer>
             </div>

@@ -147,7 +147,7 @@ impl Component for connect4_computer {
                                     self.winnerString = String::from("Draw");
                                     self.is_game_over = true;
                                 } else if win == 1 {
-                                    self.winnerString = String::from("CPU wins!");
+                                    self.winnerString = String::from("Computer wins!");
                                     self.is_game_over = true;
                                 } else {
                                     self.current_player = 1;
@@ -167,7 +167,6 @@ impl Component for connect4_computer {
                 if(self.is_game_over){
                     self.difficulty = String::from("Easy");
                     self.depth = 2;
-                    return true;
                 }
                 true
             }
@@ -175,7 +174,6 @@ impl Component for connect4_computer {
                 if(self.is_game_over){
                     self.difficulty = String::from("Medium");
                     self.depth = 4;
-                    return true;
                 }
                 true
             }
@@ -183,7 +181,6 @@ impl Component for connect4_computer {
                 if(self.is_game_over){
                     self.difficulty = String::from("Hard");
                     self.depth = 6;
-                    return true;
                 }
                 true
             }
@@ -223,7 +220,7 @@ impl Component for connect4_computer {
             <div>
                 <section class="game-container">
                     <header class="app-header">
-                        <h1 class="app-title">{ "connect4_computer" }</h1>
+                        <h1 class="app-title">{ "Connect4 vs Computer" }</h1>
                     </header>
                     <section class="game-area">
 
@@ -251,10 +248,10 @@ impl Component for connect4_computer {
                         </div>
                         <div class="readout">
                             <div>
-                                {format!("player1:{}", self.player1)}
+                                {format!("Player 1: {}", self.player1)}
                             </div>
                             <div>
-                                {format!("current difficulty:{}", self.difficulty)}
+                                {format!("Current Difficulty:{}", self.difficulty)}
                             </div>
                             <div>
                                 {format!("{}", self.winnerString)}
@@ -264,7 +261,7 @@ impl Component for connect4_computer {
                 </section>
                 <footer class="app-footer">
                     <strong class="footer-text">
-                      { "connect 4 game vs AI " }
+                      { "" }
                     </strong>
                 </footer>
             </div>
