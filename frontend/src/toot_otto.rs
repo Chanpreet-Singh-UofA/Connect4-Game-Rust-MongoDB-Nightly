@@ -27,6 +27,10 @@ pub struct toot_otto {
     input: NodeRef,
     input2: NodeRef,
     letter: String,
+    current_player: u8,
+    board: TootOtto,
+    winnerString: String,
+    is_game_over: bool,
 }
 
 impl toot_otto {
@@ -42,6 +46,11 @@ impl toot_otto {
         let col = wrap(col, self.cellules_width as isize);
 
         row * self.cellules_width + col
+    }
+    fn idx_to_row_col(&self, idx: usize) -> (isize, isize) {
+        let row = idx / self.cellules_width;
+        let col = idx % self.cellules_width;
+        (row as isize, col as isize)
     }
 
     fn view_cellule(&self, idx: usize, cellule: &Cellule, link: &Scope<Self>) -> Html {
@@ -86,6 +95,10 @@ impl Component for toot_otto {
             input: NodeRef::default(),
             input2: NodeRef::default(),
             letter: "T".to_string(),
+            current_player: 1,
+            board: TootOtto::new(),
+            winnerString: String::from(""),
+            is_game_over: true,
         }
     }
 
@@ -94,28 +107,44 @@ impl Component for toot_otto {
             Msg::Reset => {
                 self.reset();
                 log::info!("Reset");
+                self.is_game_over = false;
+                self.winnerString = String::from("");
+                self.board = TootOtto::new();
+                self.current_player = 1;
                 true
             }
             Msg::ToggleCellule(idx) => {
-                let cellule = self.cellules.get_mut(idx).unwrap();
-                cellule.toggle();
+                //cellule.toggle();
+                
                 true
             }
             Msg::updatePlayer1(player1) => {
-                self.player1 = player1;
-                true
+                if(self.is_game_over){
+                    self.player1 = player1;
+                    return true;
+                }
+                false
             }
             Msg::updatePlayer2(player2) => {
-                self.player2 = player2;
-                true
+                if(self.is_game_over){
+                    self.player2 = player2;
+                    return true;
+                }
+                false    
             }
             Msg::selectT() => {
-                self.letter = "T".to_string();
-                true
+                if(self.is_game_over){
+                    self.letter = "T".to_string();
+                    return true;
+                }
+                false
             }
             Msg::selectO() => {
-                self.letter = "O".to_string();
-                true
+                if(self.is_game_over){
+                    self.letter = "O".to_string();
+                    return true;
+                }
+                false
             }
         }
     }
