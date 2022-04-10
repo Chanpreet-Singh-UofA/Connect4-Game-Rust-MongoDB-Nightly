@@ -8,6 +8,9 @@ mod connect4_computer;
 mod toot_otto_computer;
 mod scoreboard;
 mod game_history;
+mod howToPlayTOOT;
+mod howToPlayConnect4;
+mod Home;
 use yew::html::Scope;
 //implement the yew router
 #[derive(Debug, Clone, Copy, PartialEq, Routable)]
@@ -24,6 +27,12 @@ pub enum Route {
     game_history,
     #[at("/scoreboard")]
     scoreboard,
+    #[at("/howToPlayTOOT")]
+    howToPlayTOOT,
+    #[at("/howToPlayConnect4")]
+    howToPlayConnect4,
+    #[at("/")]
+    Home,
 }
 pub enum Msg {
     ToggleNavbar,
@@ -57,12 +66,13 @@ impl Component for App {
                 <main>
                     <Switch<Route> render={Switch::render(switch)} />
                 </main>
-                <footer class="footer">
+                <footer class="footer has-background-black">
                     <div class="content has-text-centered">
                         { "made by group 13" }
                     </div>
                 </footer>
             </BrowserRouter>
+            
         }
     }
 
@@ -89,11 +99,17 @@ impl App {
                 </div>
                 <div class={classes!("navbar-menu", active_class)}>
                     <div class="navbar-start">
+                        <Link<Route> classes={classes!("navbar-item")} to={Route::Home}>
+                            { "Home" }
+                        </Link<Route>>
                         <div class="navbar-item has-dropdown is-hoverable">
                             <div class="navbar-link">
                                 { "Connect4" }
                             </div>
                             <div class="navbar-dropdown">
+                                <Link<Route> classes={classes!("navbar-item")} to={Route::howToPlayConnect4}>
+                                    { "How to Play Connect4" }
+                                </Link<Route>>
                                 <Link<Route> classes={classes!("navbar-item")} to={Route::connect4}>
                                     { "play connect4 vs human" }
                                 </Link<Route>>
@@ -107,6 +123,9 @@ impl App {
                                 { "TOOT-OTTO" }
                             </div>
                             <div class="navbar-dropdown">
+                                <Link<Route> classes={classes!("navbar-item")} to={Route::howToPlayTOOT}>
+                                    { "How to Play TOOT-OTTO" }
+                                </Link<Route>>
                                 <Link<Route> classes={classes!("navbar-item")} to={Route::toot_otto}>
                                     { "play TOOT-OTTO vs human" }
                                 </Link<Route>>
@@ -154,6 +173,15 @@ fn switch(routes: &Route) -> Html {
         },
         Route::scoreboard => html! {
             <scoreboard::ScoreBoard />
+        },
+        Route::howToPlayTOOT => html! {
+            <howToPlayTOOT::HowToToot />
+        },
+        Route::howToPlayConnect4 => html! {
+            <howToPlayConnect4::HowToConnect4 />
+        },
+        Route::Home => html! {
+            <Home::Home />
         },
     }
 }
