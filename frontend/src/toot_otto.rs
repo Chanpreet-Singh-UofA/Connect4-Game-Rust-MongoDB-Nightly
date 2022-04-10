@@ -27,6 +27,10 @@ pub struct toot_otto {
     input: NodeRef,
     input2: NodeRef,
     letter: String,
+    current_player: u8,
+    board: TootOtto,
+    winnerString: String,
+    is_game_over: bool,
 }
 
 impl toot_otto {
@@ -42,6 +46,11 @@ impl toot_otto {
         let col = wrap(col, self.cellules_width as isize);
 
         row * self.cellules_width + col
+    }
+    fn idx_to_row_col(&self, idx: usize) -> (isize, isize) {
+        let row = idx / self.cellules_width;
+        let col = idx % self.cellules_width;
+        (row as isize, col as isize)
     }
 
     fn view_cellule(&self, idx: usize, cellule: &Cellule, link: &Scope<Self>) -> Html {
@@ -86,6 +95,10 @@ impl Component for toot_otto {
             input: NodeRef::default(),
             input2: NodeRef::default(),
             letter: "T".to_string(),
+            current_player: 1,
+            board: TootOtto::new(),
+            winnerString: String::from(""),
+            is_game_over: true,
         }
     }
 
@@ -94,28 +107,80 @@ impl Component for toot_otto {
             Msg::Reset => {
                 self.reset();
                 log::info!("Reset");
+                self.is_game_over = false;
+                self.winnerString = String::from("");
+                self.board = TootOtto::new();
+                self.current_player = 1;
                 true
             }
             Msg::ToggleCellule(idx) => {
-                let cellule = self.cellules.get_mut(idx).unwrap();
-                cellule.toggle();
-                true
+                if(!self.is_game_over){
+                    let (_, col) = self.idx_to_row_col(idx);
+                    let mut piece:u8 = 0;
+                    if(self.letter == "T"){
+                        piece = 1;
+                    }
+                    else if(self.letter == "O"){
+                        piece = 2;
+                    }
+                    if(self.board.insert(col as usize,piece)){
+                        let row = 6 - self.board.col_height[col as usize];
+                        let index = self.row_col_as_idx(row as isize,col);
+                        let cellule = self.cellules.get_mut(index).unwrap();
+                        cellule.toggle(self.letter.clone());
+                        let gameState = self.board.check_win_draw(col as usize);
+                        if( gameState == 1){
+                            self.winnerString = format!("{} wins!", self.player1);
+                            self.is_game_over = true;
+                        }
+                        else if (gameState == 2){
+                            self.winnerString = format!("{} wins!", self.player2);
+                            self.is_game_over = true;
+                        }
+                        else if( gameState == -1){
+                            self.winnerString = String::from("Draw");
+                            self.is_game_over = true;
+                        }
+                        else{
+                            if(self.current_player == 1){
+                                self.current_player = 2;
+                            }else{
+                                self.current_player = 1;
+                            }
+                        }
+                        return true;
+                    }
+                }
+                
+                false
             }
             Msg::updatePlayer1(player1) => {
-                self.player1 = player1;
-                true
+                if(self.is_game_over){
+                    self.player1 = player1;
+                    return true;
+                }
+                false
             }
             Msg::updatePlayer2(player2) => {
-                self.player2 = player2;
-                true
+                if(self.is_game_over){
+                    self.player2 = player2;
+                    return true;
+                }
+                false    
             }
             Msg::selectT() => {
-                self.letter = "T".to_string();
-                true
+                if(!self.is_game_over){
+                    self.letter = "T".to_string();
+                    return true;
+                }
+                false
             }
             Msg::selectO() => {
-                self.letter = "O".to_string();
-                true
+                if(!self.is_game_over){
+                    self.letter = "O".to_string();
+                    return true;
+                }
+                false
             }
         }
     }
@@ -183,7 +248,7 @@ impl Component for toot_otto {
                     <button class="game-button" onclick={ctx.link().callback(|_| Msg::Reset)}>{ "Start" }</button>
                 </div>
                 <div>
-                    {"Select a Disc Type:  "}
+                    {"Select a Letter:"}
                     <input type="radio" id="T" value="T" checked={self.letter=="T" } oninput = {update_letter} />
                     <label for="T">{"T"}</label>
                     <input type="radio" id="O" value="O" checked={self.letter=="O"} oninput = {update_letter2}/>
@@ -192,6 +257,12 @@ impl Component for toot_otto {
                 <div class="readout">
                     <div>
                         {format!("player1:{}\tplayer2:{}\tletter:{}", self.player1,self.player2,self.letter)}
+                    </div>
+                    <div>
+                        {format!("current turn: {}", {if(self.current_player == 1){self.player1.clone()}else{self.player2.clone()}})}
+                    </div>
+                    <div>
+                        {format!("{}", self.winnerString)}
                     </div>
                 </div>
                     </section>
