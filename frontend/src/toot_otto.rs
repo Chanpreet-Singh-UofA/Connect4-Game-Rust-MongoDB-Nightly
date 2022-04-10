@@ -1,3 +1,7 @@
+#[path = "../src/toototto/mod.rs"]
+mod toototto;
+use toototto::toototto::TootOtto;
+
 use crate::cell_toot::Cellule;
 use rand::Rng;
 use yew::html::Scope;

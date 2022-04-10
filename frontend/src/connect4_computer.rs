@@ -1,3 +1,8 @@
+#[path = "../src/connect4/mod.rs"]
+mod connect4;
+use connect4::connect4::Connect4;
+use connect4::connect4_cpu::*;
+
 use crate::cell::Cellule;
 use rand::Rng;
 use yew::html::Scope;

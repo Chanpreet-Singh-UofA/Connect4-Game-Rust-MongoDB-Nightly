@@ -1,4 +1,4 @@
-use crate::toototto::toototto::TootOtto;
+use super::toototto::TootOtto;
 
 use rayon::prelude::*;
 
