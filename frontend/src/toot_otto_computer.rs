@@ -200,7 +200,7 @@ impl Component for toot_otto_computer {
                     <button class="game-button" onclick={ctx.link().callback(|_| Msg::Reset)}>{ "Start" }</button>
                 </div>
                 <div>
-                    {"Select a Disc Type:  "}
+                    {"Select a Letter:  "}
                     <input type="radio" id="T" value="T" checked={self.letter=="T" } oninput = {update_letter} />
                     <label for="T">{"T"}</label>
                     <input type="radio" id="O" value="O" checked={self.letter=="O"} oninput = {update_letter2}/>
