@@ -1,137 +1,138 @@
-use cell::Cellule;
-use rand::Rng;
-use yew::html::Scope;
-use yew::{classes, html, Component, Context, Html};
-
+use yew::prelude::*;
+use yew_router::prelude::*;
 mod cell;
-
+mod connect4;
+mod cell_toot;
+mod toot_otto;
+mod connect4_computer;
+mod toot_otto_computer;
+use yew::html::Scope;
+//implement the yew router
+#[derive(Debug, Clone, Copy, PartialEq, Routable)]
+pub enum Route {
+    #[at("/conntect4")]
+    connect4,
+    #[at("/toot_otto")]
+    toot_otto,
+    #[at("/connect4_computer")]
+    connect4_computer,
+    #[at("/toot_otto_computer")]
+    toot_otto_computer,
+}
 pub enum Msg {
-    Reset,
-    ToggleCellule(usize),
+    ToggleNavbar,
 }
-
 pub struct App {
-    cellules: Vec<Cellule>,
-    cellules_width: usize,
-    cellules_height: usize,
-}
-
-impl App {
-
-    fn reset(&mut self) {
-        for cellule in self.cellules.iter_mut() {
-            cellule.set_dead();
-        }
-    }
-
-    fn row_col_as_idx(&self, row: isize, col: isize) -> usize {
-        let row = wrap(row, self.cellules_height as isize);
-        let col = wrap(col, self.cellules_width as isize);
-
-        row * self.cellules_width + col
-    }
-
-    fn view_cellule(&self, idx: usize, cellule: &Cellule, link: &Scope<Self>) -> Html {
-        let cellule_status = {
-            if cellule.is_alive() {
-                "cellule-live"
-            } else if (cellule.is_dead()) {
-                "cellule-dead"
-            } else {
-                "cellule-green"
-            }
-        };
-        html! {
-            <div key={idx} class={classes!("game-cellule", cellule_status)}
-                onclick={link.callback(move |_| Msg::ToggleCellule(idx))}>
-            </div>
-        }
-    }
+    navbar_active: bool,
 }
 impl Component for App {
     type Message = Msg;
     type Properties = ();
 
-    fn create(ctx: &Context<Self>) -> Self {
-
-        let (cellules_width, cellules_height) = (7, 6);
-
+    fn create(_ctx: &Context<Self>) -> Self {
         Self {
-            cellules: vec![Cellule::new_dead(); cellules_width * cellules_height],
-            cellules_width,
-            cellules_height,
+            navbar_active: false,
         }
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::Reset => {
-                self.reset();
-                log::info!("Reset");
-                true
-            }
-            Msg::ToggleCellule(idx) => {
-                let cellule = self.cellules.get_mut(idx).unwrap();
-                cellule.toggle();
+            Msg::ToggleNavbar => {
+                self.navbar_active = !self.navbar_active;
                 true
             }
         }
     }
-
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let cell_rows =
-            self.cellules
-                .chunks(self.cellules_width)
-                .enumerate()
-                .map(|(y, cellules)| {
-                    let idx_offset = y * self.cellules_width;
+        html! {
+            <BrowserRouter>
+                { self.view_nav(ctx.link()) }
 
-                    let cells = cellules
-                        .iter()
-                        .enumerate()
-                        .map(|(x, cell)| self.view_cellule(idx_offset + x, cell, ctx.link()));
-                    html! {
-                        <div key={y} class="game-row">
-                            { for cells }
-                        </div>
-                    }
-                });
+                <main>
+                    <Switch<Route> render={Switch::render(switch)} />
+                </main>
+                <footer class="footer">
+                    <div class="content has-text-centered">
+                        { "made by group 7" }
+                    </div>
+                </footer>
+            </BrowserRouter>
+        }
+    }
+
+}
+impl App {
+    fn view_nav(&self, link: &Scope<Self>) -> Html {
+        let Self { navbar_active, .. } = *self;
+
+        let active_class = if !navbar_active { "is-active" } else { "" };
 
         html! {
-            <div>
-                <section class="game-container">
-                    <header class="app-header">
-                        <h1 class="app-title">{ "connect4" }</h1>
-                    </header>
-                    <section class="game-area">
-                        <div class="game-of-life">
-                            { for cell_rows }
+            <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <h1 class="navbar-item is-size-3">{ "Connect4 with TOOT-OTTO" }</h1>
+
+                    <button class={classes!("navbar-burger", "burger", active_class)}
+                        aria-label="menu" aria-expanded="false"
+                        onclick={link.callback(|_| Msg::ToggleNavbar)}
+                    >
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class={classes!("navbar-menu", active_class)}>
+                    <div class="navbar-start">
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <div class="navbar-link">
+                                { "Connect4" }
+                            </div>
+                            <div class="navbar-dropdown">
+                                <Link<Route> classes={classes!("navbar-item")} to={Route::connect4}>
+                                    { "play connect4 vs human" }
+                                </Link<Route>>
+                                <Link<Route> classes={classes!("navbar-item")} to={Route::connect4_computer}>
+                                    { "play connect4 vs computer" }
+                                </Link<Route>>
+                            </div>
                         </div>
-                        <div class="game-buttons">
-                            <button class="game-button" onclick={ctx.link().callback(|_| Msg::Reset)}>{ "Reset" }</button>
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <div class="navbar-link">
+                                { "TOOT-OTTO" }
+                            </div>
+                            <div class="navbar-dropdown">
+                                <Link<Route> classes={classes!("navbar-item")} to={Route::toot_otto}>
+                                    { "play TOOT-OTTO vs human" }
+                                </Link<Route>>
+                                <Link<Route> classes={classes!("navbar-item")} to={Route::toot_otto_computer}>
+                                    { "play TOOT-OTTO vs computer" }
+                                </Link<Route>>
+                            </div>
                         </div>
-                    </section>
-                </section>
-                <footer class="app-footer">
-                    <strong class="footer-text">
-                      { "connect 4 game vs AI " }
-                    </strong>
-                </footer>
-            </div>
+                    </div>
+                </div>
+            </nav>
         }
     }
 }
 
-fn wrap(coord: isize, range: isize) -> usize {
-    let result = if coord < 0 {
-        coord + range
-    } else if coord >= range {
-        coord - range
-    } else {
-        coord
-    };
-    result as usize
+fn switch(routes: &Route) -> Html {
+    match routes.clone() {
+        Route::connect4 => html! {
+            <connect4::connect4 />
+        },
+        Route::toot_otto => html! {
+            <toot_otto::toot_otto />
+        },
+        Route::connect4_computer => html! {
+            <connect4_computer::connect4_computer />
+        },
+        Route::toot_otto_computer => html! {
+            <toot_otto_computer::toot_otto_computer />
+        },
+    }
 }
+
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
