@@ -28,7 +28,7 @@ impl TootOtto {
     }
 
     // takes in the last placed piece as an input and checks for a win
-    // return (0 if game is still playing), (1 if player has won), (-1 if draw)
+    // return (0 if game is still playing), (1 if player has won), (-1 if draw) (2 for player 2 win) 
     pub fn check_win_draw(&mut self, col: usize) -> i8 {
         if col >= NUM_COLS { // check valid input
             return 0;

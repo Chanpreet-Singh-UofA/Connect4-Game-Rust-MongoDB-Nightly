@@ -1,7 +1,6 @@
 #[path = "../src/connect4/mod.rs"]
 mod connect4;
 use connect4::connect4::Connect4;
-
 use crate::cell::Cellule;
 use rand::Rng;
 use yew::html::Scope;
@@ -29,6 +28,11 @@ pub struct connect_4 {
     player2: String,
     input: NodeRef,
     input2: NodeRef,
+    current_player: u8,
+    board: Connect4,
+    winnerString: String,
+    is_game_over: bool,
+
 }
 
 impl connect_4 {
@@ -37,6 +41,8 @@ impl connect_4 {
         for cellule in self.cellules.iter_mut() {
             cellule.set_dead();
         }
+        self.is_game_over = false;
+        self.winnerString = String::from("");
     }
 
     fn row_col_as_idx(&self, row: isize, col: isize) -> usize {
@@ -44,6 +50,12 @@ impl connect_4 {
         let col = wrap(col, self.cellules_width as isize);
 
         row * self.cellules_width + col
+    }
+
+    fn idx_to_row_col(&self, idx: usize) -> (isize, isize) {
+        let row = idx / self.cellules_width;
+        let col = idx % self.cellules_width;
+        (row as isize, col as isize)
     }
 
     fn view_cellule(&self, idx: usize, cellule: &Cellule, link: &Scope<Self>) -> Html {
@@ -79,6 +91,10 @@ impl Component for connect_4 {
             player2: String::from(""),
             input: NodeRef::default(),
             input2: NodeRef::default(),
+            current_player: 1,
+            board: Connect4::new(),
+            winnerString: String::from(""),
+            is_game_over: true,
         }
     }
 
@@ -87,20 +103,59 @@ impl Component for connect_4 {
             Msg::Reset => {
                 self.reset();
                 log::info!("Reset");
+                self.is_game_over = false;
+                self.winnerString = String::from("");
+                self.board = Connect4::new();
+                self.current_player = 1;
                 true
             }
             Msg::ToggleCellule(idx) => {
-                let cellule = self.cellules.get_mut(idx).unwrap();
-                cellule.toggle();
-                true
+                if(!self.is_game_over){
+                    let (_, col) = self.idx_to_row_col(idx);
+                    if(self.board.insert(col as usize,self.current_player)){
+                        let row = 6 - self.board.col_height[col as usize];
+                        let index = self.row_col_as_idx(row as isize,col);
+                        let cellule = self.cellules.get_mut(index).unwrap();
+                        cellule.toggle(self.current_player);
+                        let gameState = self.board.check_win_draw(col as usize, self.current_player);
+                        if( gameState == 1){
+                            if(self.current_player == 1){
+                                self.winnerString = format!("{} wins!", self.player1);
+                            }else{
+                                self.winnerString = format!("{} wins!", self.player2);
+                            }
+                            self.is_game_over = true;
+                        }
+                        else if( gameState == -1){
+                            self.winnerString = String::from("Draw");
+                            self.is_game_over = true;
+                        }
+                        else{
+                            if(self.current_player == 1){
+                                self.current_player = 2;
+                            }else{
+                                self.current_player = 1;
+                            }
+                        }
+                        return true;
+                    }
+                }
+                false
+
             }
             Msg::updatePlayer1(player1) => {
-                self.player1 = player1;
-                true
+                if(self.is_game_over){
+                    self.player1 = player1;
+                    return true;
+                }
+                false
             }
             Msg::updatePlayer2(player2) => {
-                self.player2 = player2;
-                true
+                if(self.is_game_over){
+                    self.player2 = player2;
+                    return true;
+                }
+                false    
             }
         }
     }
@@ -169,6 +224,12 @@ impl Component for connect_4 {
                         <div class="readout">
                             <div>
                                 {format!("player1:{}\tplayer2:{}", self.player1,self.player2)}
+                            </div>
+                            <div>
+                                {format!("current turn: {}", {if(self.current_player == 1){self.player1.clone()}else{self.player2.clone()}})}
+                            </div>
+                            <div>
+                                {format!("{}", self.winnerString)}
                             </div>
                         </div>
                     </section>
