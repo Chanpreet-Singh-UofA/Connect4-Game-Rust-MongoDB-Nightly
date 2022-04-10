@@ -6,6 +6,8 @@ mod cell_toot;
 mod toot_otto;
 mod connect4_computer;
 mod toot_otto_computer;
+mod scoreboard;
+mod game_history;
 use yew::html::Scope;
 //implement the yew router
 #[derive(Debug, Clone, Copy, PartialEq, Routable)]
@@ -18,6 +20,10 @@ pub enum Route {
     connect4_computer,
     #[at("/toot_otto_computer")]
     toot_otto_computer,
+    #[at("/ganme_history")]
+    game_history,
+    #[at("/scoreboard")]
+    scoreboard,
 }
 pub enum Msg {
     ToggleNavbar,
@@ -109,6 +115,19 @@ impl App {
                                 </Link<Route>>
                             </div>
                         </div>
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <div class="navbar-link">
+                                { "Stats" }
+                            </div>
+                            <div class="navbar-dropdown">
+                                <Link<Route> classes={classes!("navbar-item")} to={Route::scoreboard}>
+                                    { "Scoreboard" }
+                                </Link<Route>>
+                                <Link<Route> classes={classes!("navbar-item")} to={Route::game_history}>
+                                    { "Game History" }
+                                </Link<Route>>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -129,6 +148,12 @@ fn switch(routes: &Route) -> Html {
         },
         Route::toot_otto_computer => html! {
             <toot_otto_computer::toot_otto_computer />
+        },
+        Route::game_history => html! {
+            <game_history::game_history />
+        },
+        Route::scoreboard => html! {
+            <scoreboard::ScoreBoard />
         },
     }
 }
