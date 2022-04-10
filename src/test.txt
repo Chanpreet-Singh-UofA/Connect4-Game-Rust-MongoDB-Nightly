@@ -1,0 +1,55 @@
+curl --request POST \
+  --url http://localhost:8000/addGame \
+  --header 'content-type: application/json' \
+  --data '{
+        "gameID": "3",                
+        "gameType": "Basketball with Computer", 
+        "player1": "newPP",
+        "player2": "Computer",
+        "winner": "newPP",
+        "playedTime": "march 1"    
+}'
+
+curl --request GET \
+  --url http://localhost:8000/getGame/1
+
+curl --request GET \
+  --url http://localhost:8000/getAllGame
+
+
+
+  curl --request GET \
+  --url http://localhost:8000/getComputerGame
+
+
+
+  curl --request POST \
+  --url http://localhost:8000/addPlayer \
+  --header 'content-type: application/json' \
+  --data '{
+        "playerName": "NewPP",
+        "playerWins": 0
+}'
+
+curl --request GET \
+  --url http://localhost:8000/getScore/NewPP
+
+
+curl --request GET \
+  --url http://localhost:8000/getAllPlayers
+
+
+curl --request GET \
+  --url http://localhost:8000/getComputerWins
+
+
+
+curl --request GET \
+  --url http://localhost:8000/getGamesCount
+
+
+
+
+
+  
+
