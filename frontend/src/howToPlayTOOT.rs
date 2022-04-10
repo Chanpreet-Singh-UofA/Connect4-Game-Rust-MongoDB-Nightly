@@ -18,7 +18,7 @@ impl Component for HowToToot {
         html! {
             <div class="w3-container" id="services" style="margin-top:75px">
                 <h5 class="w3-xxxlarge w3-text-red"><b>{"How to Play TOOT-OTTO"}</b></h5>
-                <hr style="width:50px;border:5px solid red" class="w3-round"/>
+                <hr style="width:50px;border:5px solid black" class="w3-round"/>
                 <p>
                     {"TOOT-OTTO is a fun strategy game for older players who like tic-tac-toe and checkers. One player is TOOT and the other player is OTTO. Both players can place both T's and O's, based on their choice. The first player who spells his or her winning combination - horizontally, vertically or diagonally - wins!"}
                 </p>
