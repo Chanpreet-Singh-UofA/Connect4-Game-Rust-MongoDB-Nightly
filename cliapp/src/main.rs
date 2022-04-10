@@ -10,9 +10,14 @@ use std::io;
 fn printBoard(board: Connect4) {
     for i in 0..6 {
         for j in 0..7 {
-            print!("{} ", board.board[i][j]);
+            match board.board[i][j] {
+                0 => print!("| "),
+                1 => print!("|X"),
+                2 => print!("|O"),
+                3_u8..=u8::MAX => {}
+            }
         }
-        print!("\n");
+        print!("|\n");
     }
     print!("\n");
 }
@@ -41,7 +46,7 @@ fn connect4_loop() {
     printBoard(board);
     while play {
         while turn == 1 { // player turn
-            println!("Enter Positon (0-6):");
+            println!("Enter Positon X (0-6):");
             // get input
             let mut userInput = String::new();
             io::stdin().read_line(&mut userInput).expect("failed to readline");

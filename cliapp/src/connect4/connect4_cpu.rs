@@ -14,7 +14,7 @@ fn run_next(board:Connect4, depth: usize, i: usize) -> (Option<usize>, i32) {
         if board_copy.insert(i, 2) {
             let (r1, r2) = rayon::join(|| minimax(board_copy, depth-1, 1, i), || run_next(board, depth, i+1));
             //println!("{}: {}", i, r1.1);
-            if r1.1 >= r2.1 {
+            if r1.1 > r2.1 {
                 return (Some(i), r1.1)
             } else {
                 return r2;
@@ -25,7 +25,9 @@ fn run_next(board:Connect4, depth: usize, i: usize) -> (Option<usize>, i32) {
     } else {
         let mut board_copy = board.clone();
         if board_copy.insert(i, 2) {
-            return minimax(board_copy, depth-1, 1, i);
+            let r1 = minimax(board_copy, depth-1, 1, i);
+            //println!("{}: {}", i, r1.1);
+            return (Some(i), r1.1);
         } else {
             return (None, -1030)
         }
