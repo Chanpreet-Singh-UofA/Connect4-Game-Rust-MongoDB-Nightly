@@ -18,7 +18,7 @@ impl Component for HowToConnect4 {
         html! {
             <div class="w3-container" id="services" style="margin-top:75px">
                 <h5 class="w3-xxxlarge w3-text-red"><b>{"How to Play Connect 4"}</b></h5>
-                <hr style="width:50px;border:5px solid red" class="w3-round"/>
+                <hr style="width:50px;border:5px solid black" class="w3-round"/>
                 <p>
                     {"Connect Four is a two-player connection game in which the players take turns dropping colored discs from the top into a seven-column, six-row vertically suspended grid. The objective of the game is to be the first to form a horizontal, vertical, or diagonal line of four of one's own discs."}
                 </p>
