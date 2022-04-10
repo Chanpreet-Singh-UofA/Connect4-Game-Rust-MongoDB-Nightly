@@ -15,6 +15,9 @@ pub enum Msg {
     Reset,
     ToggleCellule(usize),
     updatePlayer1(String),
+    setDifficultyEasy(),
+    setDifficultyMedium(),
+    setDifficultyHard(),
 }
 
 pub struct InputData {
@@ -27,6 +30,11 @@ pub struct connect4_computer {
     cellules_height: usize,
     player1: String,
     input: NodeRef,
+    difficulty:String,
+    current_player: u8,
+    board: Connect4,
+    winnerString: String,
+    is_game_over: bool,
 }
 
 impl connect4_computer {
@@ -42,6 +50,11 @@ impl connect4_computer {
         let col = wrap(col, self.cellules_width as isize);
 
         row * self.cellules_width + col
+    }
+    fn idx_to_row_col(&self, idx: usize) -> (isize, isize) {
+        let row = idx / self.cellules_width;
+        let col = idx % self.cellules_width;
+        (row as isize, col as isize)
     }
 
     fn view_cellule(&self, idx: usize, cellule: &Cellule, link: &Scope<Self>) -> Html {
@@ -75,6 +88,11 @@ impl Component for connect4_computer {
             cellules_height,
             player1: String::from(""),
             input: NodeRef::default(),
+            difficulty:String::from("Easy"),
+            current_player: 1,
+            board: Connect4::new(),
+            winnerString: String::from(""),
+            is_game_over: true,
         }
     }
 
@@ -83,6 +101,10 @@ impl Component for connect4_computer {
             Msg::Reset => {
                 self.reset();
                 log::info!("Reset");
+                self.is_game_over = false;
+                self.winnerString = String::from("");
+                self.board = Connect4::new();
+                self.current_player = 1;
                 true
             }
             Msg::ToggleCellule(idx) => {
@@ -94,10 +116,34 @@ impl Component for connect4_computer {
                 self.player1 = player1;
                 true
             }
+            Msg::setDifficultyEasy() => {
+                if(self.is_game_over){
+                    self.difficulty = String::from("Easy");
+                    return true;
+                }
+                false
+            }
+            Msg::setDifficultyMedium() => {
+                if(self.is_game_over){
+                    self.difficulty = String::from("Medium");
+                    return true;
+                }
+                false
+            }
+            Msg::setDifficultyHard() => {
+                if(self.is_game_over){
+                    self.difficulty = String::from("Hard");
+                    return true;
+                }
+                false
+            }
         }
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        let update_difficulty_easy = ctx.link().callback(|_| Msg::setDifficultyEasy());
+        let update_difficulty_medium = ctx.link().callback(|_| Msg::setDifficultyMedium());
+        let update_difficulty_hard = ctx.link().callback(|_| Msg::setDifficultyHard());
         let my_input_ref = self.input.clone();
         let onchange = ctx.link().batch_callback(move |_| {
             let input = my_input_ref.cast::<HtmlInputElement>();
@@ -144,9 +190,21 @@ impl Component for connect4_computer {
                             />
                             <button class="game-button" onclick={ctx.link().callback(|_| Msg::Reset)}>{ "Start" }</button>
                         </div>
+                        <div>
+                            {"Select Difficulty"}
+                            <input type="radio" id="Easy" value="Easy" checked={self.difficulty=="Easy" } oninput = {update_difficulty_easy} />
+                            <label for="Easy">{"Easy"}</label>
+                            <input type="radio" id="Medium" value="Medium" checked={self.difficulty=="Medium"} oninput = {update_difficulty_medium}/>
+                            <label for="Medium">{"Medium"}</label>
+                            <input type="radio" id="Hard" value="Hard" checked={self.difficulty=="Hard"} oninput = {update_difficulty_hard}/>
+                            <label for="Hard">{"Hard"}</label>
+                        </div>
                         <div class="readout">
                             <div>
                                 {format!("player1:{}", self.player1)}
+                            </div>
+                            <div>
+                                {format!("current difficulty:{}", self.difficulty)}
                             </div>
                         </div>
                     </section>

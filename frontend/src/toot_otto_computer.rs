@@ -16,6 +16,9 @@ pub enum Msg {
     updatePlayer1(String),
     selectT(),
     selectO(),
+    setDifficultyEasy(),
+    setDifficultyMedium(),
+    setDifficultyHard(),
 }
 
 pub struct toot_otto_computer {
@@ -25,6 +28,11 @@ pub struct toot_otto_computer {
     player1: String,
     input: NodeRef,
     letter: String,
+    difficulty:String,
+    current_player: u8,
+    board: TootOtto,
+    winnerString: String,
+    is_game_over: bool,
 }
 
 impl toot_otto_computer {
@@ -82,6 +90,11 @@ impl Component for toot_otto_computer {
             player1: String::from(""),
             input: NodeRef::default(),
             letter: "T".to_string(),
+            difficulty:String::from("Easy"),
+            current_player: 1,
+            board:TootOtto::new(),
+            winnerString: String::from(""),
+            is_game_over: true,
         }
     }
 
@@ -90,6 +103,10 @@ impl Component for toot_otto_computer {
             Msg::Reset => {
                 self.reset();
                 log::info!("Reset");
+                self.is_game_over = false;
+                self.winnerString = String::from("");
+                self.board = TootOtto::new();
+                self.current_player = 1;
                 true
             }
             Msg::ToggleCellule(idx) => {
@@ -109,10 +126,33 @@ impl Component for toot_otto_computer {
                 self.letter = "O".to_string();
                 true
             }
+            Msg::setDifficultyEasy() => {
+                if(self.is_game_over){
+                    self.difficulty = String::from("Easy");
+                    return true;
+                }
+                false
+            }
+            Msg::setDifficultyMedium() => {
+                if(self.is_game_over){
+                    self.difficulty = String::from("Medium");
+                    return true;
+                }
+                false
+            }
+            Msg::setDifficultyHard() => {
+                if(self.is_game_over){
+                    self.difficulty = String::from("Hard");
+                    return true;
+                }
+                false
+            }
         }
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        let update_difficulty_easy = ctx.link().callback(|_| Msg::setDifficultyEasy());
+        let update_difficulty_medium = ctx.link().callback(|_| Msg::setDifficultyMedium());
         let update_letter = ctx.link().callback(|_| Msg::selectT());
         let update_letter2 = ctx.link().callback(|_| Msg::selectO());
         let my_input_ref = self.input.clone();
@@ -166,9 +206,19 @@ impl Component for toot_otto_computer {
                     <input type="radio" id="O" value="O" checked={self.letter=="O"} oninput = {update_letter2}/>
                     <label for="O">{"O"}</label>
                 </div>
+                <div>
+                    {"Select Difficulty"}
+                    <input type="radio" id="Easy" value="Easy" checked={self.difficulty=="Easy" } oninput = {update_difficulty_easy} />
+                    <label for="Easy">{"Easy"}</label>
+                    <input type="radio" id="Medium" value="Medium" checked={self.difficulty=="Medium"} oninput = {update_difficulty_medium}/>
+                    <label for="Medium">{"Medium"}</label>
+                </div>
                 <div class="readout">
                     <div>
                         {format!("player1:{}\tletter:{}", self.player1,self.letter)}
+                    </div>
+                    <div>
+                        {format!("current difficulty:{}", self.difficulty)}
                     </div>
                 </div>
                     </section>

@@ -14,6 +14,7 @@ pub enum Msg {
     ToggleCellule(usize),
     updatePlayer1(String),
     updatePlayer2(String),
+    
 }
 
 pub struct InputData {
@@ -32,6 +33,8 @@ pub struct connect_4 {
     board: Connect4,
     winnerString: String,
     is_game_over: bool,
+    
+
 
 }
 
@@ -157,15 +160,16 @@ impl Component for connect_4 {
                 }
                 false    
             }
+            
         }
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        
         let my_input_ref = self.input.clone();
         let my_input_ref2 = self.input2.clone();
         let onchange = ctx.link().batch_callback(move |_| {
             let input = my_input_ref.cast::<HtmlInputElement>();
-
             input.map(|input| Msg::updatePlayer1(input.value()))
         });
 
