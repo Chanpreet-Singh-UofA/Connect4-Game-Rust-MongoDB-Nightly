@@ -1,0 +1,16 @@
+[package]
+name = "frontend"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+getrandom = { version = "0.2", features = ["js"] }
+log = "0.4"
+rand = "0.8"
+wasm-logger = "0.2"
+yew = "0.19.3"
+yew-router = "0.16.0"
+web-sys = "0.3.57"
+rayon = "1.5.1"
