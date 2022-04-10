@@ -1,7 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 mod cell;
-mod connect4;
+mod connect_4;
 mod cell_toot;
 mod toot_otto;
 mod connect4_computer;
@@ -119,7 +119,7 @@ impl App {
 fn switch(routes: &Route) -> Html {
     match routes.clone() {
         Route::connect4 => html! {
-            <connect4::connect4 />
+            <connect_4::connect4 />
         },
         Route::toot_otto => html! {
             <toot_otto::toot_otto />
