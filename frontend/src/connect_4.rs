@@ -198,7 +198,7 @@ impl Component for connect_4 {
             <div>
                 <section class="game-container">
                     <header class="app-header">
-                        <h1 class="app-title">{ "connect4" }</h1>
+                        <h1 class="app-title">{ "Connect4 PvP" }</h1>
                     </header>
                     <section class="game-area">
 
@@ -225,10 +225,10 @@ impl Component for connect_4 {
                         </div>
                         <div class="readout">
                             <div>
-                                {format!("player1:{}\tplayer2:{}", self.player1,self.player2)}
+                                {format!("Player 1: {}   |   Player 2: {}", self.player1,self.player2)}
                             </div>
                             <div>
-                                {format!("current turn: {}", {if(self.current_player == 1){self.player1.clone()}else{self.player2.clone()}})}
+                                {format!("Current Turn: {}", {if(self.current_player == 1){self.player1.clone()}else{self.player2.clone()}})}
                             </div>
                             <div>
                                 {format!("{}", self.winnerString)}
@@ -238,7 +238,7 @@ impl Component for connect_4 {
                 </section>
                 <footer class="app-footer">
                     <strong class="footer-text">
-                      { "connect 4 game vs AI " }
+                      { "" }
                     </strong>
                 </footer>
             </div>

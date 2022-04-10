@@ -18,7 +18,6 @@ pub enum Msg {
     selectO(),
     setDifficultyEasy(),
     setDifficultyMedium(),
-    setDifficultyHard(),
 }
 
 pub struct toot_otto_computer {
@@ -29,6 +28,7 @@ pub struct toot_otto_computer {
     input: NodeRef,
     letter: String,
     difficulty:String,
+    depth: usize,
     current_player: u8,
     board: TootOtto,
     winnerString: String,
@@ -48,6 +48,11 @@ impl toot_otto_computer {
         let col = wrap(col, self.cellules_width as isize);
 
         row * self.cellules_width + col
+    }
+    fn idx_to_row_col(&self, idx: usize) -> (isize, isize) {
+        let row = idx / self.cellules_width;
+        let col = idx % self.cellules_width;
+        (row as isize, col as isize)
     }
 
     fn view_cellule(&self, idx: usize, cellule: &Cellule, link: &Scope<Self>) -> Html {
@@ -91,6 +96,7 @@ impl Component for toot_otto_computer {
             input: NodeRef::default(),
             letter: "T".to_string(),
             difficulty:String::from("Easy"),
+            depth: 2,
             current_player: 1,
             board:TootOtto::new(),
             winnerString: String::from(""),
@@ -110,42 +116,108 @@ impl Component for toot_otto_computer {
                 true
             }
             Msg::ToggleCellule(idx) => {
-                let cellule = self.cellules.get_mut(idx).unwrap();
-                //cellule.toggle();
-                true
+                if(!self.is_game_over){
+                    let (_, col) = self.idx_to_row_col(idx);
+                    let mut piece:u8 = 0;
+                    if(self.letter == "T") {
+                        piece = 1;
+                    }
+                    else if(self.letter == "O"){
+                        piece = 2;
+                    }
+                    if(self.board.insert(col as usize,piece)){
+                        let row = 6 - self.board.col_height[col as usize];
+                        let index = self.row_col_as_idx(row as isize,col);
+                        let cellule = self.cellules.get_mut(index).unwrap();
+                        cellule.toggle(self.letter.clone());
+                        let gameState = self.board.check_win_draw(col as usize);
+                        if( gameState == 1){
+                            self.winnerString = format!("{} wins!", self.player1);
+                            self.is_game_over = true;
+                        }
+                        else if (gameState == 2){
+                            self.winnerString = format!("Computer wins!");
+                            self.is_game_over = true;
+                        }
+                        else if( gameState == -1){
+                            self.winnerString = String::from("Draw");
+                            self.is_game_over = true;
+                        }
+                        else{
+                            self.current_player = 2;
+                        }
+                        // computer turn
+                        let cpu = toototto::toototto_cpu::minimax(self.board, self.depth, 2, col as usize).0;
+                        match cpu {
+                            None => {
+                                //println!("cpu did nothing -- error");
+                            },
+                            Some((ccol, token)) => {
+                                self.board.insert(ccol, token); // always will return true
+                                let letter = if token == 1 {
+                                    "T"
+                                } else {
+                                    "O"
+                                };
+                                let row = 6 - self.board.col_height[ccol as usize];
+                                let index = self.row_col_as_idx(row as isize,ccol as isize);
+                                let cellule = self.cellules.get_mut(index).unwrap();
+                                cellule.toggle(letter.to_string());
+
+                                let win = self.board.check_win_draw(ccol);
+                                if win == -1 {
+                                    self.winnerString = String::from("Draw");
+                                    self.is_game_over = true;
+                                } else if win == 1 {
+                                    self.winnerString = format!("{} wins!", self.player1);
+                                    self.is_game_over = true;
+                                } else if win == 2 {
+                                    self.winnerString = format!("Computer wins!");
+                                    self.is_game_over = true;
+                                } else {
+                                    self.current_player = 1;
+                                }
+                            }
+                        }
+
+                        return true;
+                    }
+                }
+
+                false
             }
             Msg::updatePlayer1(player1) => {
-                self.player1 = player1;
-                true
+                if(self.is_game_over){
+                    self.player1 = player1;
+                    return true;
+                }
+                false
             }
             Msg::selectT() => {
-                self.letter = "T".to_string();
+                if(!self.is_game_over){
+                    self.letter = "T".to_string();
+                }
                 true
             }
             Msg::selectO() => {
-                self.letter = "O".to_string();
+                if(!self.is_game_over){
+                    self.letter = "O".to_string();
+                }
                 true
             }
             Msg::setDifficultyEasy() => {
                 if(self.is_game_over){
                     self.difficulty = String::from("Easy");
-                    return true;
+                    self.depth = 2;
                 }
-                false
+                true
             }
             Msg::setDifficultyMedium() => {
                 if(self.is_game_over){
                     self.difficulty = String::from("Medium");
-                    return true;
+                    self.depth = 4;
                 }
-                false
-            }
-            Msg::setDifficultyHard() => {
-                if(self.is_game_over){
-                    self.difficulty = String::from("Hard");
-                    return true;
-                }
-                false
+                true
             }
         }
     }
@@ -183,7 +255,7 @@ impl Component for toot_otto_computer {
             <div>
                 <section class="game-container">
                     <header class="app-header">
-                        <h1 class="app-title">{ "toot_otto_computer" }</h1>
+                        <h1 class="app-title">{ "TOOT-OTTO vs Computer" }</h1>
                     </header>
                     <section class="game-area">
                     <div class="game-of-life">
@@ -199,14 +271,14 @@ impl Component for toot_otto_computer {
                     />
                     <button class="game-button" onclick={ctx.link().callback(|_| Msg::Reset)}>{ "Start" }</button>
                 </div>
-                <div>
+                <div class="readout">
                     {"Select a Letter:  "}
                     <input type="radio" id="T" value="T" checked={self.letter=="T" } oninput = {update_letter} />
                     <label for="T">{"T"}</label>
                     <input type="radio" id="O" value="O" checked={self.letter=="O"} oninput = {update_letter2}/>
                     <label for="O">{"O"}</label>
                 </div>
-                <div>
+                <div class="readout">
                     {"Select Difficulty"}
                     <input type="radio" id="Easy" value="Easy" checked={self.difficulty=="Easy" } oninput = {update_difficulty_easy} />
                     <label for="Easy">{"Easy"}</label>
@@ -215,17 +287,23 @@ impl Component for toot_otto_computer {
                 </div>
                 <div class="readout">
                     <div>
-                        {format!("player1:{}\tletter:{}", self.player1,self.letter)}
+                        {format!("Player 1: {}", self.player1)}
                     </div>
                     <div>
-                        {format!("current difficulty:{}", self.difficulty)}
+                    {format!("Objective: spell TOOT")}
+                    </div>
+                    <div>
+                        {format!("Current Difficulty: {}", self.difficulty)}
+                    </div>
+                    <div>
+                        {format!("{}", self.winnerString)}
                     </div>
                 </div>
                     </section>
                 </section>
                 <footer class="app-footer">
                     <strong class="footer-text">
-                      { "connect 4 game vs AI " }
+                      { "" }
                     </strong>
                 </footer>
             </div>
