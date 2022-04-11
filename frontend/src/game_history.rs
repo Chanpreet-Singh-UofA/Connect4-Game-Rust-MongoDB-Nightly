@@ -11,8 +11,6 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, RequestMode, Response};
-use chrono::prelude::*;
-use std::time::{SystemTime, UNIX_EPOCH, Duration};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
@@ -46,19 +44,19 @@ impl From<JsValue> for FetchError {
 
 
 pub enum Msg {
-    GetOK(Vec<Game>),
-    GetFailed(String),
+    gotGameData(Vec<Game>),
+    getGameDataFailed(String),
 }
 
 pub struct game_history {
-    data: Option<Vec<Game>>,
+    gameData: Option<Vec<Game>>,
 }
 
 impl game_history {
     fn view_data(&self) -> Html {
 
-        if let Some(ref games) = self.data {
-            html!{
+        if let Some(ref games) = self.gameData {
+            return html!{
                 { games.iter().enumerate().map(|(i, game)| {
 
                         html! {
@@ -72,53 +70,42 @@ impl game_history {
                             </tr>
                         }
                     }).collect::<Html>() }
-            }
+            };
         }
-        else {
-            html! {
-                <tr><td colspan="6">{"Loading..."}</td></tr>
-            }
-        }
+        html!{}
     }
 }
 
-pub async fn send_post_request(game_result:Game) -> Result<(), FetchError> {
-    let mut opts = RequestInit::new();
-    opts.method("POST");
-    opts.mode(RequestMode::Cors);
-
-    let game_result_json = serde_json::to_string(&game_result).unwrap();
-
-    opts.body(Some(&JsValue::from_serde(&game_result_json).unwrap()));
-
-
-    let request = Request::new_with_str_and_init("http://localhost:8000/addGame", &opts)?;
-
-    request
-        .headers()
-        .set("Content-Type", "text/plain")?;
-    let window = web_sys::window().unwrap();
-    let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
-    
-
-    Ok(())
-}
+    pub async fn send_post_request(results:Game) -> Result<(), FetchError> {
+        let mut options = RequestInit::new();
+        options.method("POST");
+        options.mode(RequestMode::Cors);
+        let results_json = serde_json::to_string(&results).unwrap();
+        options.body(Some(&JsValue::from_serde(&results_json).unwrap()));
+        let request = Request::new_with_str_and_init("http://localhost:8000/addGame", &options)?;
+        request
+            .headers()
+            .set("Content-Type", "text/plain")?;
+        let window = web_sys::window().unwrap();
+        let response_value = JsFuture::from(window.fetch_with_request(&request)).await?;
+        Ok(())
+    }
 
 
-pub async fn get_game_data() -> Result<Vec<Game>, FetchError> {
-    let mut opts = RequestInit::new();
-    opts.method("GET");
-    opts.mode(RequestMode::Cors);
-    let request = Request::new_with_str_and_init("http://localhost:8000/getAllGame", &opts)?;
-    let window = web_sys::window().unwrap();
-    let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
-    assert!(resp_value.is_instance_of::<Response>());
-    let resp: Response = resp_value.dyn_into().unwrap();
-    let json = JsFuture::from(resp.json()?).await?;
-    let game_data: Vec<Game> = json.into_serde().unwrap();
-    log::info!("game data got");
-    Ok(game_data)
-}
+    pub async fn get_games() -> Result<Vec<Game>, FetchError> {
+        let mut options = RequestInit::new();
+        options.method("GET");
+        options.mode(RequestMode::Cors);
+        let request = Request::new_with_str_and_init("http://localhost:8000/getAllGame", &options)?;
+        let window = web_sys::window().unwrap();
+        let response_value = JsFuture::from(window.fetch_with_request(&request)).await?;
+        assert!(response_value.is_instance_of::<Response>());
+        let response: Response = response_value.dyn_into().unwrap();
+        let json = JsFuture::from(response.json()?).await?;
+        let games: Vec<Game> = json.into_serde().unwrap();
+        log::info!("game data got");
+        Ok(games)
+    }
 
 impl Component for game_history {
     type Message = Msg;
@@ -127,32 +114,29 @@ impl Component for game_history {
     fn create(ctx: &Context<Self>) -> Self {
 
         ctx.link().send_future(async {
-            match get_game_data().await {
-                Ok(game_data) => {
-                    Msg::GetOK(game_data)
+            match get_games().await {
+                Ok(games) => {
+                    Msg::gotGameData(games)
                 },
                 Err(err) => {
-                    Msg::GetFailed(err.to_string())
+                    Msg::getGameDataFailed(err.to_string())
                 }
             }
         });
         game_history{
-            data: None,
+            gameData: None,
         }
 
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::GetOK(game_data) => {
+            Msg::gotGameData(games) => {
 
-                for game in &game_data {
-                }
-
-                self.data = Some(game_data);
+                self.gameData = Some(games);
                 true
             },
-            Msg::GetFailed(err) => {
+            Msg::getGameDataFailed(err) => {
                 false
             }
         }
@@ -163,18 +147,16 @@ impl Component for game_history {
         html! {
             <div class="w3-container" id="services" style="margin-top:75px;margin-bottom:75px">
             <h5 class="w3-xxxlarge w3-text-red"><b>{"Game History"}</b></h5>
-            //<hr style="width:50px;border:5px solid red" class="w3-round"/>
-            <hr style="height:2px;border-width:0;color:black;background-color:black"/>
             <hr style="height:2px;border-width:0;color:gray;background-color:gray"/>
             <div id="game-stream">
             <table class="table-center" border=1>
                 <tr>
-                    <th style="color:#ccc">{"Game-ID"}</th>
-                    <th style="color:#ccc">{"Game Type"}</th>
-                    <th style="color:#ccc">{"Player1"}</th>
-                    <th style="color:#ccc">{"Player2"}</th>
-                    <th style="color:#ccc">{"Winner"}</th>
-                    <th style="color:#ccc">{"When Played"}</th>
+                    <th style="color:white">{"Game-ID"}</th>
+                    <th style="color:white">{"Game Type"}</th>
+                    <th style="color:white">{"Player1"}</th>
+                    <th style="color:white">{"Player2"}</th>
+                    <th style="color:white">{"Winner"}</th>
+                    <th style="color:white">{"When Played"}</th>
                 </tr>
                 { self.view_data() }
             </table>

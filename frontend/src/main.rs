@@ -1,3 +1,4 @@
+// https://github.com/yewstack/yew/blob/master/examples/router/src/main.rs for learning how to use yew router and create nav bar
 use yew::prelude::*;
 use yew_router::prelude::*;
 mod cell;
@@ -12,7 +13,7 @@ mod howToPlayTOOT;
 mod howToPlayConnect4;
 mod Home;
 use yew::html::Scope;
-//implement the yew router
+//implement yew router
 #[derive(Debug, Clone, Copy, PartialEq, Routable)]
 pub enum Route {
     #[at("/conntect4")]
