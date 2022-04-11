@@ -15,6 +15,7 @@ use mongodb::sync::Collection;
 use rocket::http::Header;
 use rocket::{Request, Response};
 use rocket::fairing::{Fairing, Info, Kind};
+use chrono::{Datelike, Timelike, Utc};
 
 pub struct CORS;
 
@@ -148,13 +149,15 @@ pub fn addGame(gameInfo: Json<Game>) {
 
     match MyMongo::setup() {
         Ok(mut db) =>{
+            let time = chrono::offset::Local::now();
+            let (is_pm, hour) = time.hour12();
             let gameDoc = doc! {
                 "gameID": &gameInfo.gameID,
                 "gameType": &gameInfo.gameType,
                 "player1": &gameInfo.player1,
                 "player2": &gameInfo.player2,
                 "winner": &gameInfo.winner,
-                "playedTime": &gameInfo.playedTime
+                "playedTime":  format!("{}-{:02}-{:02} at {:02}:{:02} {}", time.year(), time.month(), time.day(), hour, time.minute(), if is_pm { "PM" } else { "AM" })
             };
     
             let gamesCollection = db.db.collection("game");

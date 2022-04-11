@@ -161,18 +161,20 @@ impl Component for game_history {
     fn view(&self, ctx: &Context<Self>) -> VNode {
         let link = ctx.link();
         html! {
-            <div class="w3-container" id="services" style="margin-top:75px">
+            <div class="w3-container" id="services" style="margin-top:75px;margin-bottom:75px">
             <h5 class="w3-xxxlarge w3-text-red"><b>{"Game History"}</b></h5>
-            <hr style="width:50px;border:5px solid red" class="w3-round"/>
+            //<hr style="width:50px;border:5px solid red" class="w3-round"/>
+            <hr style="height:2px;border-width:0;color:black;background-color:black"/>
+            <hr style="height:2px;border-width:0;color:gray;background-color:gray"/>
             <div id="game-stream">
-            <table border=1>
+            <table class="table-center" border=1>
                 <tr>
-                    <th>{"Game-ID"}</th>
-                    <th>{"Game Type"}</th>
-                    <th>{"Player1"}</th>
-                    <th>{"Player2"}</th>
-                    <th>{"Winner"}</th>
-                    <th>{"When Played"}</th>
+                    <th style="color:#ccc">{"Game-ID"}</th>
+                    <th style="color:#ccc">{"Game Type"}</th>
+                    <th style="color:#ccc">{"Player1"}</th>
+                    <th style="color:#ccc">{"Player2"}</th>
+                    <th style="color:#ccc">{"Winner"}</th>
+                    <th style="color:#ccc">{"When Played"}</th>
                 </tr>
                 { self.view_data() }
             </table>

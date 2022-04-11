@@ -41,3 +41,4 @@ cargo run
 cd frontend
 trunk serve --release
 ```
+3. Open a browser an navigate to 'http://localhost:8080'
