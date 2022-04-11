@@ -1,4 +1,6 @@
 /* https://stackoverflow.com/questions/29464671/how-to-make-an-item-fall-down-with-css3-animation for animation */
+/* https://github.com/jgthms/bulma/issues/2514 for fixing navbar dropdown not going away after focus is not on it */
+/* https://stackoverflow.com/questions/43727032/hero-footer-not-at-bottom-of-page how to fix footer not at bottom of page */
 html {
   margin: 0px;
   height: 100%;
@@ -10,6 +12,7 @@ body {
   text-align: center;
 }
 
+
 body {
   font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
   height: 100%;
@@ -19,10 +22,14 @@ body {
   margin: 0 auto;
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
   font-weight: 300;
   background-color: rgb(6, 6, 6);
 }
-
+body > footer {
+  margin-top: auto;
+}
 .app-logo {
   animation: app-logo-scale infinite 4s linear;
   height: 80px;
@@ -78,6 +85,15 @@ body {
   line-height: 0;
 }
 
+@media screen and (min-width: 1025px) {
+  .navbar-item.is-hoverable:hover .navbar-dropdown {
+      display: block !important;
+  }
+  .navbar-item.is-hoverable:focus-within .navbar-dropdown {
+      display: none;
+  }
+}
+
 .game-cellule {
   display: table-cell;
   width: 80px;
@@ -97,7 +113,7 @@ body {
 @keyframes board-animation {
   0% {
     opacity: 0;
-    transform: translateY(-400px);;
+    transform: translateY(-600px);;
   }
   100% {
     opacity: 1;
