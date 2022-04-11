@@ -1,3 +1,4 @@
+//https://github.com/yewstack/yew/tree/master/examples/game_of_life for learning how to use yew to draw cells
 #[path = "../src/toototto/mod.rs"]
 mod toototto;
 use toototto::toototto::TootOtto;
