@@ -237,16 +237,18 @@ impl Component for ScoreBoard {
     fn view(&self, ctx: &Context<Self>) -> VNode {
         let link = ctx.link();
         html! {
-            <div class="w3-container" id="services" style="margin-top:75px">
+            <div class="w3-container" id="services" style="margin-top:75px;margin-bottom:75px">
             <h5 class="w3-xxxlarge w3-text-red"><b>{"Score Board"}</b></h5>
-            <hr style="width:50px;border:5px solid red" class="w3-round"/>
+            //<hr style="width:50px;border:5px solid red" class="w3-round"/>
+            <hr style="height:2px;border-width:0;color:black;background-color:black"/>
+            <hr style="height:2px;border-width:0;color:gray;background-color:gray"/>
             <div id="game-stream">
             <h6 class="w3-text-white" align="left"><b>{"Games Won by Computer"}</b></h6>
             <table border=1 style="color: white">
                 <tr>
-                    <th>{" Total Games Played "}</th>
-                    <th>{" Games Against Computer "}</th>
-                    <th>{" Games Computer Won "}</th>
+                    <th style="color:#ccc">{" Total Games Played "}</th>
+                    <th style="color:#ccc">{" Games Against Computer "}</th>
+                    <th style="color:#ccc">{" Games Computer Won "}</th>
                 </tr>
                 { self.view_computer_stat() }
             </table>
@@ -254,11 +256,11 @@ impl Component for ScoreBoard {
             <h6 class="w3-text-white" align="left"><b>{"Details of Games Won by Computer"}</b></h6>
             <table border=1 style="color: white" class="center">
                 <tr>
-                    <th>{"Sl. No"}</th>
-                    <th>{" Games Type "}</th>
-                    <th>{" Winner "}</th>
-                    <th>{" Played Against "}</th>
-                    <th>{" When Played "}</th>
+                    <th style="color:#ccc">{"Sl. No"}</th>
+                    <th style="color:#ccc">{" Games Type "}</th>
+                    <th style="color:#ccc">{" Winner "}</th>
+                    <th style="color:#ccc">{" Played Against "}</th>
+                    <th style="color:#ccc">{" When Played "}</th>
                 </tr>
                 { self.view_computer_wins() }
             </table>
@@ -266,9 +268,9 @@ impl Component for ScoreBoard {
             <h6 class="w3-text-white" align="left"><b>{"Details of Games Won by All Players"}</b></h6>
             <table border=1 style="color: white" class="center">
                 <tr>
-                    <th>{"Sl. No"}</th>
-                    <th>{" Winner or Draw "}</th>
-                    <th>{" No. of Wins "}</th>
+                    <th style="color:#ccc">{"Sl. No"}</th>
+                    <th style="color:#ccc">{" Winner or Draw "}</th>
+                    <th style="color:#ccc">{" No. of Wins "}</th>
                 </tr>
                 { self.view_all_wins() }
             </table>
