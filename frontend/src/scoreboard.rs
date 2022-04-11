@@ -221,7 +221,7 @@ impl Component for ScoreBoard {
             <h6 class="w3-text-white" align="left"><b>{"Details of Games Won by All Players"}</b></h6>
             <table border=1 style="color: white" class="center">
                 <tr>
-                    <th style="color:white">{"Sl. No"}</th>
+                    <th style="color:white">{"Rank"}</th>
                     <th style="color:white">{" Winner or Draw "}</th>
                     <th style="color:white">{" No. of Wins "}</th>
                 </tr>
