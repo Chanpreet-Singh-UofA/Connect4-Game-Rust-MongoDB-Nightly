@@ -120,12 +120,12 @@ impl toot_otto_computer {
 
     fn view_cellule(&self, idx: usize, cellule: &Cellule, link: &Scope<Self>) -> Html {
         let cellule_status = {
-            if cellule.is_alive() {
-                "cellule-live"
-            } else if (cellule.is_dead()) {
-                "cellule-dead"
+            if cellule.is_palive() {
+                "cellule-live_toot"
+            } else if (cellule.is_pdead()) {
+                "cellule-dead_toot"
             } else {
-                "cellule-green"
+                "cellule-green_toot"
             }
         };
         html! {
@@ -192,7 +192,7 @@ impl Component for toot_otto_computer {
                         let row = 6 - self.board.col_height[col as usize];
                         let index = self.row_col_as_idx(row as isize,col);
                         let cellule = self.cellules.get_mut(index).unwrap();
-                        cellule.toggle(self.letter.clone());
+                        cellule.toggle(self.letter.clone(), self.current_player);
                         let gameState = self.board.check_win_draw(col as usize);
                         if( gameState == 1){
                             self.winnerString = format!("{} wins!", self.player1);
@@ -279,7 +279,7 @@ impl Component for toot_otto_computer {
                                 let row = 6 - self.board.col_height[ccol as usize];
                                 let index = self.row_col_as_idx(row as isize,ccol as isize);
                                 let cellule = self.cellules.get_mut(index).unwrap();
-                                cellule.toggle(letter.to_string());
+                                cellule.toggle(letter.to_string(), self.current_player);
 
                                 let win = self.board.check_win_draw(ccol);
                                 if win == -1 {
