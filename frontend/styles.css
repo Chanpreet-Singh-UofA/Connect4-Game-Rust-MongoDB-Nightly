@@ -1,3 +1,4 @@
+/* https://stackoverflow.com/questions/29464671/how-to-make-an-item-fall-down-with-css3-animation for animation */
 html {
   margin: 0px;
   height: 100%;
@@ -91,7 +92,7 @@ body {
   color: rgb(10, 10, 10);
   transition: height 0.5;
   
-  /* animation: new-item-animation .3s linear forwards; */
+  
 }
 @keyframes board-animation {
   0% {
