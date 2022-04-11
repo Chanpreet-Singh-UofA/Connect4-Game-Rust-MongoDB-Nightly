@@ -193,7 +193,8 @@ impl Component for ScoreBoard {
         let link = ctx.link();
         html! {
             <div class="w3-container" id="services" style="margin-top:75px;margin-bottom:75px">
-            <h5 class="w3-xxxlarge w3-text-red"><b>{"Score Board"}</b></h5>
+            <h5 class="w3-xxxlarge w3-text-blue-gray"><b>{"Score Board"}</b></h5>
+            <hr style="height:2px;border-width:0;opacity:0"/>
             <hr style="height:2px;border-width:0;color:gray;background-color:gray"/>
             <div id="game-stream">
             <h6 class="w3-text-white"><b>{"Games Won by Computer"}</b></h6>

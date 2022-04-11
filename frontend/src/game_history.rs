@@ -146,7 +146,8 @@ impl Component for game_history {
         let link = ctx.link();
         html! {
             <div class="w3-container" id="services" style="margin-top:75px;margin-bottom:75px">
-            <h5 class="w3-xxxlarge w3-text-red"><b>{"Game History"}</b></h5>
+            <h5 class="w3-xxxlarge w3-text-blue-gray"><b>{"Game History"}</b></h5>
+            <hr style="height:2px;border-width:0;opacity:0"/>
             <hr style="height:2px;border-width:0;color:gray;background-color:gray"/>
             <div id="game-stream">
             <table class="table-center" border=1>
