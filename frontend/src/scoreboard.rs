@@ -124,6 +124,8 @@ impl ScoreBoard {
                 let mut player_win_counts = HashMap::new();
                 for game in games.iter().filter(|game| game.winner != "Draw") {
                     *player_win_counts.entry(game.winner.as_str()).or_insert(0) += 1;
+                    *player_win_counts.entry(game.player1.as_str()).or_insert(0) += 0;
+                    *player_win_counts.entry(game.player2.as_str()).or_insert(0) += 0;
                 }
                 for game in games.iter().filter(|game| game.winner == "Draw") {
                     *player_win_counts.entry(game.player1.as_str()).or_insert(0) += 0;
