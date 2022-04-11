@@ -17,9 +17,9 @@ impl Component for Home {
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <div class="w3-container" id="services" style="margin-top:75px;margin-bottom:75px">
-                <h5 class="w3-xxxlarge w3-text-red"><b>{"Welcome"}</b></h5>
+                <h5 class="w3-xxxlarge w3-text-blue-gray"><b>{"Welcome"}</b></h5>
                 //<hr style="width:50px;border:5px solid black" class="w3-round"/>
-                <hr style="height:2px;border-width:0;color:black;background-color:black"/>
+                <hr style="height:2px;border-width:0;opacity:0"/>
                 <hr style="height:2px;border-width:0;color:gray;background-color:gray"/>
                 <p>
                     {"This application contains the following two board games, both in human Vs. human and human Vs. Computer versions."}
