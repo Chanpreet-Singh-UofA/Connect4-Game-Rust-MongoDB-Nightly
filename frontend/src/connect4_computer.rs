@@ -128,7 +128,7 @@ impl connect4_computer {
             } else if (cellule.is_dead()) {
                 "cellule-dead"
             } else {
-                "cellule-green"
+                "cellule-green-computer"
             }
         };
         html! {
