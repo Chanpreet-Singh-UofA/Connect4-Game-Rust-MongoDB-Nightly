@@ -27,9 +27,9 @@ impl Component for HowToConnect4 {
                 <br/>
                 <div><h5>{"To play Connect 4 follow the following steps:"}</h5></div>
                 <ul>
-                    <li>{"When Starting a new game, player 1 is red and player 2 is green"}</li>
+                    <li>{"When Starting a new game, player 1 is red and player 2 is yellow"}</li>
                     <li>{"When playing against the computer you are always player1 and thus red"}</li>
-                    <li>{"For people who have trouble disctiguishing colours we have a text incator for the color of the block (X for red and O for green)"}</li>
+                    <li>{"For people who have trouble disctiguishing colours we have a text incator for the color of the block (X for red and O for yellow)"}</li>
                     <li>{"Click on the desired column on the game board to place your disc"}</li>
                     <li>{"Try to connect 4 of your colored discs either horizontally or vertically or diagonally"}</li>
 
