@@ -141,3 +141,14 @@ body {
   font-size: 14px;
   color: #ccc;
 }
+
+.table-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+th, td {
+  padding-left: 15px;
+  padding-right: 15px;
+  color: #ccc;
+}

@@ -7,6 +7,45 @@ use rand::Rng;
 use yew::html::Scope;
 use web_sys::HtmlInputElement;
 use yew::{classes, html, Component, Context, Html, NodeRef};
+use std::{
+    error::Error,
+    fmt::{self, Debug, Display, Formatter},
+};
+use serde::{Deserialize, Serialize};
+use web_sys::{Request, RequestInit, RequestMode, Response};
+use wasm_bindgen::prelude::*;
+use wasm_bindgen_futures::JsFuture;
+use std::time::{SystemTime, UNIX_EPOCH, Duration};
+use chrono;
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[allow(non_snake_case)]
+pub struct Game {
+    gameID: String,
+    gameType: String,
+    player1: String,
+    player2: String,
+    winner: String,
+    playedTime: String,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct FetchError {
+    err: JsValue,
+}
+
+impl Display for FetchError {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        Debug::fmt(&self.err, f)
+    }
+}
+impl Error for FetchError {}
+
+impl From<JsValue> for FetchError {
+    fn from(value: JsValue) -> Self {
+        Self { err: value }
+    }
+}
 
 
 pub enum Msg {
@@ -16,6 +55,8 @@ pub enum Msg {
     updatePlayer2(String),
     selectT(),
     selectO(),
+    GetOK(),
+    GetFailed(String),
 }
 
 pub struct toot_otto {
@@ -31,6 +72,28 @@ pub struct toot_otto {
     board: TootOtto,
     winnerString: String,
     is_game_over: bool,
+}
+
+pub async fn send_post_request(game_result:Game) -> Result<(), FetchError> {
+    let mut opts = RequestInit::new();
+    opts.method("POST");
+    opts.mode(RequestMode::Cors);
+
+    let game_result_json = serde_json::to_string(&game_result).unwrap();
+
+    opts.body(Some(&JsValue::from_serde(&game_result_json).unwrap()));
+
+
+    let request = Request::new_with_str_and_init("http://localhost:8000/addGame", &opts)?;
+
+    request
+        .headers()
+        .set("Content-Type", "text/plain")?;
+    let window = web_sys::window().unwrap();
+    let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
+    
+
+    Ok(())
 }
 
 impl toot_otto {
@@ -102,7 +165,7 @@ impl Component for toot_otto {
         }
     }
 
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::Reset => {
                 self.reset();
@@ -131,15 +194,69 @@ impl Component for toot_otto {
                         let gameState = self.board.check_win_draw(col as usize);
                         if( gameState == 1){
                             self.winnerString = format!("{} wins!", self.player1);
+                            let game_result = Game {
+                                gameID: "".to_string(),
+                                gameType: "TOOT-OTTO".to_string(),
+                                player1: self.player1.clone(),
+                                player2: self.player2.clone(),
+                                winner: self.player1.clone(),
+                                playedTime: "test time".to_string(),
+                            };
+                            ctx.link().send_future(async {
+                                match send_post_request(game_result).await {
+                                    Ok(_) => {
+                                        Msg::GetOK()
+                                    },
+                                    Err(err) => {
+                                        Msg::GetFailed(err.to_string())
+                                    }
+                                }
+                            });
                             self.is_game_over = true;
                         }
                         else if (gameState == 2){
                             self.winnerString = format!("{} wins!", self.player2);
+                            let game_result = Game {
+                                gameID: "".to_string(),
+                                gameType: "TOOT-OTTO".to_string(),
+                                player1: self.player1.clone(),
+                                player2: self.player2.clone(),
+                                winner: self.player2.clone(),
+                                playedTime: "test time".to_string(),
+                            };
+                            ctx.link().send_future(async {
+                                match send_post_request(game_result).await {
+                                    Ok(_) => {
+                                        Msg::GetOK()
+                                    },
+                                    Err(err) => {
+                                        Msg::GetFailed(err.to_string())
+                                    }
+                                }
+                            });
                             self.is_game_over = true;
                         }
                         else if( gameState == -1){
                             self.winnerString = String::from("Draw");
                             self.is_game_over = true;
+                            let game_result = Game {
+                                gameID: "".to_string(),
+                                gameType: "TOOT-OTTO".to_string(),
+                                player1: self.player1.clone(),
+                                player2: self.player2.clone(),
+                                winner: "Draw".to_string(),
+                                playedTime: "test time".to_string(),
+                            };
+                            ctx.link().send_future(async {
+                                match send_post_request(game_result).await {
+                                    Ok(_) => {
+                                        Msg::GetOK()
+                                    },
+                                    Err(err) => {
+                                        Msg::GetFailed(err.to_string())
+                                    }
+                                }
+                            });
                         }
                         else{
                             if(self.current_player == 1){
@@ -179,6 +296,12 @@ impl Component for toot_otto {
                     self.letter = "O".to_string();
                 }
                 true
+            },
+            Msg::GetOK() => {
+                false
+            },
+            Msg::GetFailed(err) => {
+                false
             }
         }
     }
