@@ -126,7 +126,7 @@ impl toot_otto_computer {
             } else if (cellule.is_pdead()) {
                 "cellule-dead_toot"
             } else {
-                "cellule-green_toot"
+                "cellule-green_toot_computer"
             }
         };
         html! {

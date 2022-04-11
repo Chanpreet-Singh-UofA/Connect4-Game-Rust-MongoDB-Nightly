@@ -89,18 +89,49 @@ body {
   vertical-align: middle;
   font-size: 35px;
   color: rgb(10, 10, 10);
+  transition: height 0.5;
+  
+  /* animation: new-item-animation .3s linear forwards; */
+}
+@keyframes board-animation {
+  0% {
+    opacity: 0;
+    transform: translateY(-600px);;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes new-item-animation {
+  0% {
+    opacity: 0;
+    transform: translateY(-600px);;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .cellule-dead {
   background-color: rgb(6, 6, 6);
+  animation: board-animation 1s linear forwards;
 }
 
 .cellule-live {
   background-color: rgb(211, 0, 0);
+  animation: new-item-animation .3s linear forwards;
 }
 
 .cellule-green {
     background-color: rgb(217, 217, 0);
+    animation: new-item-animation .3s linear forwards;
+}
+.cellule-green-computer {
+  background-color: rgb(217, 217, 0);
+  animation: new-item-animation .5s linear forwards;
 }
 
 .game-cellule_toot {
@@ -112,15 +143,25 @@ body {
 
 .cellule-dead_toot {
   background-color: rgb(6, 6, 6);
+  animation: board-animation 1s linear forwards;
+  
 }
 
 .cellule-live_toot {
   background-color: seagreen;
+  animation: new-item-animation .3s linear forwards;
 }
 
 .cellule-green_toot {
     background-color: darkseagreen;
+    animation: new-item-animation .3s linear forwards;
 }
+
+.cellule-green_toot_computer {
+  background-color: darkseagreen;
+  animation: new-item-animation .5s linear forwards;
+}
+
 .burger {
   background-color: transparent;
   border: none;
