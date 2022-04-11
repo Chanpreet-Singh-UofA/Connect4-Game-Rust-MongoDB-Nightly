@@ -196,8 +196,8 @@ impl Component for ScoreBoard {
             <h5 class="w3-xxxlarge w3-text-red"><b>{"Score Board"}</b></h5>
             <hr style="height:2px;border-width:0;color:gray;background-color:gray"/>
             <div id="game-stream">
-            <h6 class="w3-text-white" align="left"><b>{"Games Won by Computer"}</b></h6>
-            <table border=1 style="color: white">
+            <h6 class="w3-text-white"><b>{"Games Won by Computer"}</b></h6>
+            <table border=1 style="color: white" class="table-center">
                 <tr>
                     <th style="color:white">{" Total Games Played "}</th>
                     <th style="color:white">{" Games Against Computer "}</th>
@@ -206,8 +206,8 @@ impl Component for ScoreBoard {
                 { self.stats_tables(1) }
             </table>
 
-            <h6 class="w3-text-white" align="left"><b>{"Details of Games Won by Computer"}</b></h6>
-            <table border=1 style="color: white" class="center">
+            <h6 class="w3-text-white"><b>{"Details of Games Won by Computer"}</b></h6>
+            <table border=1 style="color: white" class="table-center">
                 <tr>
                     <th style="color:white">{"Sl. No"}</th>
                     <th style="color:white">{" Games Type "}</th>
@@ -218,8 +218,8 @@ impl Component for ScoreBoard {
                 { self.stats_tables(2) }
             </table>
 
-            <h6 class="w3-text-white" align="left"><b>{"Details of Games Won by All Players"}</b></h6>
-            <table border=1 style="color: white" class="center">
+            <h6 class="w3-text-white"><b>{"Details of Games Won by All Players"}</b></h6>
+            <table border=1 style="color: white" class="table-center">
                 <tr>
                     <th style="color:white">{"Rank"}</th>
                     <th style="color:white">{" Winner or Draw "}</th>
