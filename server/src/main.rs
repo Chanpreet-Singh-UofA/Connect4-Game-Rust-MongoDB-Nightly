@@ -105,7 +105,6 @@ pub fn addGame(gameInfo: Json<Game>) {
     }
 }
 
-//Return a game with a particular game ID
 
 //Return all the games. 
 #[get("/getAllGame")]    
