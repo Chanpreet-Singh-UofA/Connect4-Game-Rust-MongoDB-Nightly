@@ -19,7 +19,6 @@ Instructions are on MongoDB website: https://www.mongodb.com/try/download/commun
 
 4. Build and Run Server.
 ```
-cargo build
 cargo run
 ```
 
@@ -41,4 +40,4 @@ cargo run
 cd frontend
 trunk serve --release
 ```
-3. Open a browser an navigate to 'http://localhost:8080'
+3. Open a browser and navigate to 'http://localhost:8080'
