@@ -102,6 +102,7 @@ impl toot_otto {
     fn reset(&mut self) {
         for cellule in self.cellules.iter_mut() {
             cellule.set_dead();
+            cellule.set_pdead();
         }
     }
 
